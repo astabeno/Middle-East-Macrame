@@ -1,12 +1,12 @@
 import { initializeApp } from "firebase/app";
-import { 
-  getAuth, 
-  GoogleAuthProvider, 
+import {
+  getAuth,
+  GoogleAuthProvider,
   signInWithPopup,
-  createUserWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
 } from "firebase/auth";
 
 import {
@@ -20,12 +20,9 @@ import {
   QuerySnapshot,
   arrayUnion,
   serverTimestamp,
-} from 'firebase/firestore'
+} from "firebase/firestore";
 
-import {
-  getStorage, 
-  ref
-} from 'firebase/storage'
+import { getStorage, ref } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_API_KEY,
@@ -35,34 +32,33 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBSE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBSE_APP_ID,
   measurementId: process.envNEXT_PUBLIC_FIREBSE_MEASUREMENT_ID,
-}
+};
 
-initializeApp(firebaseConfig)
+initializeApp(firebaseConfig);
 
-export const googleProvider = new GoogleAuthProvider()
+export const googleProvider = new GoogleAuthProvider();
 
 //sign in with Google or create account with Google
-googleProvider.setCustomParameters({promt: 'select_account'})
+googleProvider.setCustomParameters({ promt: "select_account" });
 
 //create Firebase Auth object
 export const auth = getAuth();
 //create db link
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async(
-  userAuth, 
-  additionalInformation = {},
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalInformation = {}
 ) => {
+  if (!userAuth) return;
 
-  if(!userAuth) return;
+  const userDocRef = doc(db, "users", userAuth.uid);
 
-  const userDocRef = doc(db, 'users', userAuth.uid)
+  const userSnapshot = await getDoc(userDocRef);
+  const loginTime = new Date();
 
-  const userSnapshot = await getDoc(userDocRef)
-    const loginTime = new Date();
-  
   if (!userSnapshot.exists()) {
-    const { displayName, email, providerData } = userAuth
+    const { displayName, email, providerData } = userAuth;
 
     try {
       await setDoc(userDocRef, {
@@ -74,7 +70,7 @@ export const createUserDocumentFromAuth = async(
         ...additionalInformation,
       });
     } catch (error) {
-      console.log('error creating user', error.message, 'color: #bada55')
+      console.log("error creating user", error.message, "color: #bada55");
     }
   }
 
@@ -84,12 +80,12 @@ export const createUserDocumentFromAuth = async(
   try {
     await updateDoc(userDocRef, {
       lastLogin: loginTime,
-    })
+    });
   } catch (error) {
-    console.log('error updating user', error.message, 'color: #bada55')
+    console.log("error updating user", error.message, "color: #bada55");
   }
   return userDocRef;
-}
+};
 
 export const getUserDocument = async (uid) => {
   const userRef = doc(db, "users", uid);
@@ -102,14 +98,13 @@ export const getUserDocument = async (uid) => {
         // set some default user data if the user document doesn't exist yet
         createdAt: new Date(),
       });
-      const newUserSnapshot = await getDoc(userRef)
+      const newUserSnapshot = await getDoc(userRef);
       return newUserSnapshot.data();
     } catch (error) {
-      console.error("Error creating user document", error)
+      console.error("Error creating user document", error);
     }
   }
 };
-
 
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
@@ -124,75 +119,70 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
 };
 
 export const signInWithGooglePopup = async () => {
-  const {user} = await signInWithPopup(auth, googleProvider)
-  createUserDocumentFromAuth(user)
-  
-}
+  const { user } = await signInWithPopup(auth, googleProvider);
+  createUserDocumentFromAuth(user);
+};
 
 export const signOutUser = async () => await signOut(auth);
 
-export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth, callback)
+export const onAuthStateChangedListener = (callback) =>
+  onAuthStateChanged(auth, callback);
 
 //Pieces Collection
-  
+
 export async function getPiecesCollection() {
-  const allPiecesSnapshot = await getDocs(collection(db, "pieces"))
+  const allPiecesSnapshot = await getDocs(collection(db, "pieces"));
 
-  const pieces = allPiecesSnapshot.docs.map(piece => ({ id: piece.id, ...piece.data()}))
+  const pieces = allPiecesSnapshot.docs.map((piece) => ({
+    id: piece.id,
+    ...piece.data(),
+  }));
 
-  return pieces
+  return pieces;
 }
 
-export async function updatePiece( pieceUpdated ){
+export async function updatePiece(pieceUpdated) {
   const pieceRef = doc(db, "pieces", pieceUpdated.id);
-  await updateDoc(pieceRef, {...pieceUpdated})
+  await updateDoc(pieceRef, { ...pieceUpdated });
 }
 
-export async function placeBid ( user, piece, amount ){
+export async function placeBid(user, piece, amount) {
+  console.log(user);
 
-  console.log(user)
+  const userRef = doc(db, "users", user.uid);
+  const pieceRef = doc(db, "pieces", piece.id);
 
-  const userRef = doc( db, "users", user.uid )
-  const pieceRef = doc( db, "pieces", piece.id )
+  const timestamp = new Date();
+  console.log(timestamp);
 
-  const timestamp = new Date()
-  console.log(timestamp)
-  
-  const userBid = { 
+  const userBid = {
     pieceId: piece.id,
     pieceName: piece.name,
     bidAmount: amount,
     bidTime: timestamp,
-  }
+  };
   const pieceBid = {
     userId: user.uid,
     userName: user.displayName,
     bidAmount: amount,
     bidTime: timestamp,
-  }
+  };
   try {
-    await updateDoc(
-      userRef, 
-        { bids: arrayUnion(userBid)
-        })
-    await updateDoc(
-      pieceRef,
-        { 
-          currentBid: amount,
-          highestBidder: user.displayName,
-          bids: arrayUnion(pieceBid)}
-    )
-    console.log('Bid added Successfully')
+    await updateDoc(userRef, { bids: arrayUnion(userBid) });
+    await updateDoc(pieceRef, {
+      currentBid: amount,
+      highestBidder: user.displayName,
+      bids: arrayUnion(pieceBid),
+    });
+    console.log("Bid added Successfully");
   } catch (error) {
-    console.error('Error adding bid', error)
-  } 
+    console.error("Error adding bid", error);
+  }
 }
 
 //image storage
 const storage = getStorage();
 
-
-export function imageUpload(image){
-  const imageRef = ref(storage, image)
-  
+export function imageUpload(image) {
+  const imageRef = ref(storage, image);
 }

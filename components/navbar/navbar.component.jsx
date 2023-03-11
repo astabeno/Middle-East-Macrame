@@ -1,37 +1,41 @@
-import { useState, useContext } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon, UserCircleIcon } from '@heroicons/react/24/outline'
+import { useState, useContext } from "react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+import {
+  Bars3Icon,
+  BellIcon,
+  XMarkIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
 
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Link from "next/link";
+import { useRouter } from "next/router";
 
-import { navlinks } from './navlinks'
+import { navlinks } from "./navlinks";
 
-import LoginModal from './loginModal.component'
-import UserMenu from './userMenu'
-import Message from '../message/message';
+import LoginModal from "./loginModal.component";
+import UserMenu from "./userMenu";
+import Message from "../message/message";
 
 //user Context
-import { UserContext } from '../../contexts/userContext';
-
+import { UserContext } from "../../contexts/userContext";
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
-  const { currentUser  } = useContext( UserContext )
+  const { currentUser } = useContext(UserContext);
 
   function toggleLoginModal() {
-    setShowLogin(!showLogin)
-    console.log(showLogin)
+    setShowLogin(!showLogin);
+    console.log(showLogin);
   }
 
   const router = useRouter();
-    
-  const isActive = (href) =>{
-      return href === router.pathname;
-  }
+
+  const isActive = (href) => {
+    return href === router.pathname;
+  };
   return (
     <Disclosure as="nav" className="bg-gray-900">
       {({ open }) => (
@@ -40,9 +44,11 @@ export default function Navbar() {
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 {/* Mobile menu button*/}
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md 
+                <Disclosure.Button
+                  className="inline-flex items-center justify-center rounded-md 
                                               p-2 text-gray-400 hover:bg-gray-700 hover:text-white 
-                                              focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                                              focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                >
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
@@ -71,10 +77,12 @@ export default function Navbar() {
                         key={item.name}
                         href={item.href}
                         className={classNames(
-                          isActive(item.href) ? 'bg-gray-900 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white',
-                          'px-3 py-2 rounded-md text-sm font-medium'
+                          isActive(item.href)
+                            ? "bg-gray-900 text-white"
+                            : "text-gray-400 hover:bg-gray-700 hover:text-white",
+                          "px-3 py-2 rounded-md text-sm font-medium"
                         )}
-                        aria-current={isActive(item.href) ? 'page' : undefined}
+                        aria-current={isActive(item.href) ? "page" : undefined}
                       >
                         {item.name}
                       </Link>
@@ -82,23 +90,25 @@ export default function Navbar() {
                   </div>
                 </div>
               </div>
-              <div className="absolute inset-y-0 right-0 flex items-center 
+              <div
+                className="absolute inset-y-0 right-0 flex items-center 
                               pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
-              > 
-                { currentUser ? (
-                    <>
-                      <Message text="After Login"/>
-                      <button
-                        type="button"
-                        className="rounded-full bg-gray-800 p-1 text-gray-400 
+              >
+                {currentUser ? (
+                  <>
+                    <Message text="After Login" />
+                    <button
+                      type="button"
+                      className="rounded-full bg-gray-800 p-1 text-gray-400 
                             hover:text-white focus:outline-none focus:ring-2 
-                            focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                          <span className="sr-only">View notifications</span>
-                          <BellIcon className="h-6 w-6"  />
-                      </button>
-                      <UserMenu />
-                    </>
-                ):(
+                            focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                    >
+                      <span className="sr-only">View notifications</span>
+                      <BellIcon className="h-6 w-6" />
+                    </button>
+                    <UserMenu />
+                  </>
+                ) : (
                   <LoginModal />
                 )}
               </div>
@@ -114,10 +124,12 @@ export default function Navbar() {
                   as="a"
                   href={item.href}
                   className={classNames(
-                    isActive(item.href) ? 'bg-gray-900 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white',
-                    'block px-3 py-2 rounded-md text-base font-medium'
+                    isActive(item.href)
+                      ? "bg-gray-900 text-white"
+                      : "text-gray-400 hover:bg-gray-700 hover:text-white",
+                    "block px-3 py-2 rounded-md text-base font-medium"
                   )}
-                  aria-current={item.current ? 'page' : undefined}
+                  aria-current={item.current ? "page" : undefined}
                 >
                   {item.name}
                 </Disclosure.Button>
@@ -127,5 +139,5 @@ export default function Navbar() {
         </>
       )}
     </Disclosure>
-  )
+  );
 }

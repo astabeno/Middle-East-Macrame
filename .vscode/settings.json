@@ -1,5 +1,6 @@
 {
     "emmet.includeLanguages": {
         "css": "css"
-    }
+    },
+    "editor.formatOnSave": true
 }

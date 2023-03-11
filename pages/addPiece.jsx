@@ -1,11 +1,11 @@
-import React from 'react'
+import React from "react";
 
-import AddPieceForm from '../components/addPieceForm'
+import AddPieceForm from "../components/addPieceForm";
 
 export default function AddPiece() {
   return (
-    <div className='m-5'>
+    <div className="m-5">
       <AddPieceForm />
     </div>
-  )
+  );
 }
