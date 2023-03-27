@@ -1,126 +1,128 @@
-import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/router";
+import Link from 'next/link'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
+
+import Input from '../components/form/Input'
 
 import {
-  createAuthUserWithEmailAndPassword,
-  createUserDocumentFromAuth,
-} from "../utils/firebase.utils";
+   createAuthUserWithEmailAndPassword,
+   createUserDocumentFromAuth,
+} from '../utils/firebase.utils'
 
 const defaultFormFields = {
-  displayName: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
+   displayName: '',
+   email: '',
+   password: '',
+   confirmPassword: '',
+}
 
 export default function signUp() {
-  const router = useRouter();
-  const [formFields, setFormFields] = useState(defaultFormFields);
-  const { displayName, email, password, confirmPassword } = formFields;
+   const router = useRouter()
+   const [formFields, setFormFields] = useState(defaultFormFields)
+   const { displayName, email, password, confirmPassword } = formFields
 
-  const resetFields = () => {
-    setFormFields(defaultFormFields);
-  };
+   const resetFields = () => {
+      setFormFields(defaultFormFields)
+   }
 
-  const onSubmitHandler = async (event) => {
-    event.preventDefault();
+   const onSubmitHandler = async (event) => {
+      event.preventDefault()
 
-    if (password !== confirmPassword) {
-      alert("Password don't match!");
-    }
-    try {
-      const { user } = await createAuthUserWithEmailAndPassword(
-        email,
-        password
-      );
-      await createUserDocumentFromAuth(user, { displayName });
-      console.log(`${user.displayName}`);
-      resetFields();
-      router.push({
-        pathname: "/",
-        query: { message: "ACCOUNT_CREATION_SUCCESS" },
-      });
-    } catch (error) {
-      if (error.code === "auth/email-already-in-use") {
-        alert("Email already Registered");
-      } else {
-        console.log("error creating user", error);
+      if (password !== confirmPassword) {
+         alert("Password don't match!")
       }
-    }
-  };
+      try {
+         const { user } = await createAuthUserWithEmailAndPassword(
+            email,
+            password
+         )
+         await createUserDocumentFromAuth(user, { displayName })
+         console.log(`${user.displayName}`)
+         resetFields()
+         router.push({
+            pathname: '/',
+            query: { message: 'ACCOUNT_CREATION_SUCCESS' },
+         })
+      } catch (error) {
+         if (error.code === 'auth/email-already-in-use') {
+            alert('Email already Registered')
+         } else {
+            console.log('error creating user', error)
+         }
+      }
+   }
 
-  const changeHandler = (event) => {
-    const { name, value } = event.target;
-    setFormFields({ ...formFields, [name]: value });
-  };
+   const changeHandler = (event) => {
+      const { name, value } = event.target
+      setFormFields({ ...formFields, [name]: value })
+   }
 
-  return (
-    <div className="bg-grey-lighter min-h-screen flex flex-col">
-      <div
-        className="container max-w-sm mx-auto flex-1 flex flex-col items-center 
-                        justify-center px-2"
-      >
-        <div className="bg-white px-6 py-8 rounded shadow-md text-black w-full">
-          <h1 className="mb-8 text-3xl text-center">Sign up</h1>
-          <form onSubmit={onSubmitHandler}>
-            <input
-              type="text"
-              className="block border border-grey-light w-full p-3 rounded mb-4"
-              name="displayName"
-              placeholder="Display Name"
-              value={displayName}
-              onChange={changeHandler}
-              required
-            />
-            <input
-              type="email"
-              className="block border border-grey-light w-full p-3 rounded mb-4"
-              name="email"
-              placeholder="Email"
-              value={email}
-              onChange={changeHandler}
-              required
-            />
-            <input
-              type="password"
-              className="block border border-grey-light w-full p-3 rounded mb-4"
-              name="password"
-              placeholder="Password"
-              value={password}
-              onChange={changeHandler}
-              required
-            />
-            <input
-              type="password"
-              className="block border border-grey-light w-full p-3 rounded mb-4"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={changeHandler}
-              required
-            />
-            <button
-              type="submit"
-              className="w-full text-center py-3 rounded bg-green-500 
-                                text-white hover:bg-green-dark focus:outline-none my-1"
-            >
-              Create Account
-            </button>
-          </form>
-        </div>
+   return (
+      <div className="bg-grey-lighter flex min-h-screen flex-col">
+         <div
+            className="container mx-auto flex max-w-sm flex-1 flex-col items-center 
+                        justify-center px-2">
+            <div className="w-full rounded bg-white px-6 py-8 text-black shadow-md">
+               <h1 className="mb-8 text-center text-3xl">Sign up</h1>
+               <form
+                  className="space-y-4 md:space-y-6"
+                  onSubmit={onSubmitHandler}>
+                  <Input
+                     className=""
+                     type="text"
+                     name="displayName"
+                     label="Display Name"
+                     placeholder=" "
+                     value={displayName}
+                     onChange={changeHandler}
+                     isRequired={true}
+                  />
+                  <Input
+                     type="email"
+                     name="email"
+                     label="Email"
+                     placeholder=" "
+                     value={email}
+                     onChange={changeHandler}
+                     isRequired={true}
+                  />
+                  <Input
+                     type="password"
+                     name="password"
+                     label="Password"
+                     placeholder=" "
+                     value={password}
+                     onChange={changeHandler}
+                     isRequired={true}
+                  />
+                  <Input
+                     type="password"
+                     name="confirmPassword"
+                     label="Confirm Password"
+                     placeholder=" "
+                     value={confirmPassword}
+                     onChange={changeHandler}
+                     isRequired={true}
+                  />
+                  <button
+                     type="submit"
+                     className="hover:bg-green-dark my-1 w-full rounded bg-green-500 
+                                py-3 text-center text-white focus:outline-none">
+                     Create Account
+                  </button>
+               </form>
+            </div>
 
-        <div className="text-grey-dark mt-6">
-          Already have an account?
-          <Link
-            className="no-underline border-b border-blue text-blue"
-            href="../login/"
-          >
-            Log in
-          </Link>
-          .
-        </div>
+            <div className="text-grey-dark mt-6">
+               Already have an account?
+               <Link
+                  className="border-blue text-blue border-b no-underline"
+                  href="../login/">
+                  Log in
+               </Link>
+               .
+            </div>
+         </div>
       </div>
-    </div>
-  );
+   )
 }

@@ -1,29 +1,34 @@
-import Image from "next/image";
+import Image from 'next/image'
 
 export default function gallery({ pieces }) {
-  return (
-    <div>
-      {pieces.map((piece) => {
-        return (
-          <div key={piece.id}>
-            <h2>{piece.name}</h2>
-            <Image src={piece.url} height={400} width={300} />
-            <span>{piece.dimensions}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
+   return (
+      <div>
+         {pieces.map((piece) => {
+            return (
+               <div key={piece.id}>
+                  <h2>{piece.name}</h2>
+                  <Image
+                     src={piece.url}
+                     height={400}
+                     width={300}
+                     alt={piece.name}
+                  />
+                  <span>{piece.dimensions}</span>
+               </div>
+            )
+         })}
+      </div>
+   )
 }
 
 export async function getStaticProps(context) {
-  const res = await fetch("http://localhost:3000/api/pieces");
+   const res = await fetch('http://localhost:3000/api/pieces')
 
-  const pieces = await res.json();
+   const pieces = await res.json()
 
-  return {
-    props: {
-      pieces,
-    },
-  };
+   return {
+      props: {
+         pieces,
+      },
+   }
 }

@@ -1,20 +1,20 @@
-import "../styles/globals.css";
-import type { AppProps } from "next/app";
-import { UserProvider } from "../contexts/userContext";
-import { PiecesProvider } from "../contexts/piecesContext";
+import '../styles/globals.css'
+import type { AppProps } from 'next/app'
+import { UserProvider } from '../contexts/userContext'
+import { PiecesProvider } from '../contexts/piecesContext'
 
-import Layout from "./layout";
+import MainLayout from '../components/layouts/MainLayout'
 
 export default function App({ Component, pageProps }: AppProps) {
-  return (
-    <>
-      <UserProvider>
-        <PiecesProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </PiecesProvider>
-      </UserProvider>
-    </>
-  );
+   return (
+      <>
+         <UserProvider>
+            <PiecesProvider>
+               <MainLayout>
+                  <Component {...pageProps} />
+               </MainLayout>
+            </PiecesProvider>
+         </UserProvider>
+      </>
+   )
 }
