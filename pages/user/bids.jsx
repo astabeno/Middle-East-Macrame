@@ -1,25 +1,35 @@
-import { useContext } from 'react'
+import { useContext, useState, useEffect } from 'react'
 
 import { UserContext } from '../../contexts/userContext'
-import useUSDate from '../../hooks/useUSDate'
-import useFormatTime from '../../hooks/useFormatTime'
 
-export default function Bids() {
+import UserBidsGrid from '../../components/bids/userBidsGrid'
+
+import { getUserBids } from '../../utils/firebase.utils'
+
+export default function bids() {
    const { currentUser } = useContext(UserContext)
-   const { bids, displayName } = currentUser
+   const { displayName } = currentUser
+   const [userBids, setUserBids] = useState([])
+
+   useEffect(() => {
+      const getBids = async () => {
+         const foundBids = await getUserBids(currentUser.uid)
+         const bids = foundBids.map((bid) => ({
+            ...bid,
+            bidTime: bid.bidTime.toMillis(),
+         }))
+         setUserBids(bids)
+      }
+      getBids()
+   }, [])
+
    return (
-      <div>
-         <h1>Bids for {displayName}</h1>
-         {bids ? (
-            currentUser.bids.map((bid) => {
-               return (
-                  <p>
-                     {bid.pieceName} - amount: {bid.bidAmount} - Date:{' '}
-                     {useUSDate(bid.bidTime.toDate())} - Time:{' '}
-                     {useFormatTime(bid.bidTime.toDate())}`
-                  </p>
-               )
-            })
+      <div className="my-6 mx-auto w-11/12 rounded-2xl bg-white p-8 shadow-lg">
+         <h1 className="mb-7 border-b-2 pb-2 text-center text-3xl font-extrabold">
+            Bids for {displayName}
+         </h1>
+         {userBids ? (
+            <UserBidsGrid bids={userBids} />
          ) : (
             <p>You haven't bid on anything</p>
          )}

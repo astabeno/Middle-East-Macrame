@@ -1,30 +1,35 @@
-import Image from 'next/image'
+import PieceThumb from '../components/piece/PieceThumb'
+import { getPiecesCollection } from '../utils/firebase.utils'
 
 export default function gallery({ pieces }) {
    return (
-      <div>
+      <div className="flex flex-wrap">
          {pieces.map((piece) => {
-            return (
-               <div key={piece.id}>
-                  <h2>{piece.name}</h2>
-                  <Image
-                     src={piece.url}
-                     height={400}
-                     width={300}
-                     alt={piece.name}
-                  />
-                  <span>{piece.dimensions}</span>
-               </div>
-            )
+            return <PieceThumb piece={piece} />
          })}
       </div>
    )
 }
 
 export async function getStaticProps(context) {
-   const res = await fetch('http://localhost:3000/api/pieces')
+   const piecesCollection = await getPiecesCollection()
+   console.log(piecesCollection)
+   const pieces = piecesCollection.map((piece) => {
+      if (!piece.dateUpdated) {
+         return {
+            ...piece,
+            auctionEnd: piece.auctionEnd.toMillis(),
+            dateAdded: piece.dateAdded.toMillis(),
+         }
+      }
 
-   const pieces = await res.json()
+      return {
+         ...piece,
+         auctionEnd: piece.auctionEnd.toMillis(),
+         dateAdded: piece.dateAdded.toMillis(),
+         dateUpdated: piece.dateUpdated?.toMillis(),
+      }
+   })
 
    return {
       props: {

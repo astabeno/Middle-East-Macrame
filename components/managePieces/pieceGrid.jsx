@@ -1,11 +1,17 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
+
 import CountdownTimer from '../countdown/CountdownTimer'
+import { getPieceBidCount } from '../../utils/firebase.utils'
 
 export default function PieceGrid({ pieces }) {
+   const router = useRouter()
+
    function selectHandler(id) {
-      console.log(`piece with id ${id} was selected`)
+      router.push(`http://localhost:3000/admin/managePieces/${id}`)
    }
+
    return (
       <div className="m-5 rounded-xl bg-white p-5 shadow-lg">
          <div className="mb-3 text-center text-4xl">
@@ -14,13 +20,15 @@ export default function PieceGrid({ pieces }) {
          <hr />
          <div className="m-5 space-y-2">
             {pieces.map((piece) => {
-               const { name, auctionEnd, bids, url, id } = piece
-               const numberOfBids = bids ? bids.length : 0
+               const { name, auctionEnd, url, id } = piece
+
+               const targetTimeMils =
+                  auctionEnd.seconds * 1000 + auctionEnd.nanoseconds / 1000000
                return (
                   <>
                      <div
-                        className="grid h-20 grid-cols-4 border-b bg-slate-100
-                                    hover:translate-x-1 hover:translate-y-1 hover:shadow-md"
+                        className="grid h-20 grid-cols-4 border-b bg-slate-100 shadow-sm
+                                    hover:-translate-x-1 hover:-translate-y-1 hover:shadow-lg"
                         onClick={() => {
                            selectHandler(id)
                         }}>
@@ -29,9 +37,8 @@ export default function PieceGrid({ pieces }) {
                         </div>
                         <div>{name}</div>
                         <div>
-                           <CountdownTimer targetDate={auctionEnd} />
+                           <CountdownTimer targetDate={targetTimeMils} />
                         </div>
-                        <div>{numberOfBids}</div>
                      </div>
                   </>
                )

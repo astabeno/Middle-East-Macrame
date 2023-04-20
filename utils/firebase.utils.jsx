@@ -11,25 +11,54 @@ import {
 
 import {
    getFirestore,
+   getCountFromServer,
    doc,
    getDoc,
    collection,
+   where,
+   query,
    getDocs,
    setDoc,
    addDoc,
    updateDoc,
+   deleteDoc,
    QuerySnapshot,
    arrayUnion,
+   Timestamp,
    serverTimestamp,
+   orderBy,
 } from 'firebase/firestore'
 
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
+import {
+   getDatabase,
+   ref as rtref,
+   push,
+   set,
+   limitToLast,
+   query as rtquery,
+   onChildAdded,
+   orderByChild,
+   equalTo,
+   once,
+   collection as rtCollection,
+   where as rtwhere,
+} from 'firebase/database'
+
+import {
+   getDownloadURL,
+   getStorage,
+   ref as storeRef,
+   uploadBytes,
+} from 'firebase/storage'
+
+import { getFunctions } from 'firebase/functions'
 
 import { v4 as uuidv4 } from 'uuid'
 
 const firebaseConfig = {
    apiKey: process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_API_KEY,
    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASEURL,
    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
    storageBucket: process.env.NEXT_PUBLIC_FIREBSE_STORAGEBUCKET,
    messagingSenderId: process.env.NEXT_PUBLIC_FIREBSE_MESSAGING_SENDER_ID,
@@ -37,7 +66,7 @@ const firebaseConfig = {
    measurementId: process.envNEXT_PUBLIC_FIREBSE_MEASUREMENT_ID,
 }
 
-initializeApp(firebaseConfig)
+export const app = initializeApp(firebaseConfig)
 
 export const googleProvider = new GoogleAuthProvider()
 
@@ -48,6 +77,8 @@ googleProvider.setCustomParameters({ promt: 'select_account' })
 export const auth = getAuth()
 //create db link
 export const db = getFirestore()
+export const rtdb = getDatabase()
+export const functions = getFunctions()
 
 export const createUserDocumentFromAuth = async (
    userAuth,
@@ -76,9 +107,6 @@ export const createUserDocumentFromAuth = async (
          console.log('error creating user', error.message, 'color: #bada55')
       }
    }
-
-   // const userData = userSnapshot.data();
-   // setCurrentUser(userData)
 
    try {
       await updateDoc(userDocRef, {
@@ -140,20 +168,30 @@ export async function getPiecesCollection() {
       id: piece.id,
       ...piece.data(),
    }))
-
    return pieces
+}
+
+export async function getPiece(id) {
+   const pieceRef = doc(db, 'pieces', id)
+   const pieceSnap = await getDoc(pieceRef)
+
+   if (pieceSnap.exists()) {
+      return { id, ...pieceSnap.data() }
+   } else {
+      throw new Error(`No Piece with ID: ${id}`)
+   }
 }
 
 export async function addPiece(pieceInfo) {
    const newPiece = {
       name: pieceInfo.name,
+      description: pieceInfo.description,
       dimensions: pieceInfo.dimensions,
       url: pieceInfo.imageUrl,
       startingBid: pieceInfo.startingBid,
-      currentBid: pieceInfo.startingBid,
-      auctionEnd: new Date(pieceInfo.auctionEnd),
-      sold: false,
-      dateAdded: new Date(),
+      highestBid: pieceInfo.startingBid,
+      auctionEnd: Timestamp.fromDate(new Date(pieceInfo.auctionEnd)),
+      dateAdded: serverTimestamp(),
    }
 
    try {
@@ -164,43 +202,128 @@ export async function addPiece(pieceInfo) {
    }
 }
 
-export async function updatePiece(pieceUpdated) {
-   const pieceRef = doc(db, 'pieces', pieceUpdated.id)
-   await updateDoc(pieceRef, { ...pieceUpdated })
+export async function updatePiece(pieceInfo) {
+   console.log(`from firebase utils: ${pieceInfo.auctionEnd}`)
+   const updatedPiece = {
+      name: pieceInfo.name,
+      dimensions: pieceInfo.dimensions,
+      url: pieceInfo.url,
+      startingBid: pieceInfo.startingBid,
+      highestBid: pieceInfo.startingBid,
+      auctionEnd: Timestamp.fromDate(new Date(pieceInfo.auctionEnd)),
+      dateUpdated: serverTimestamp(),
+   }
+
+   const pieceRef = doc(db, 'pieces', pieceInfo.id)
+   await updateDoc(pieceRef, { ...updatedPiece })
 }
 
+export async function deletePiece(pieceID) {
+   await deleteDoc(doc(db, 'pieces', pieceID))
+}
+
+//Bids Functions
+
 export async function placeBid(user, piece, amount) {
-   console.log(user)
-
-   const userRef = doc(db, 'users', user.uid)
-   const pieceRef = doc(db, 'pieces', piece.id)
-
-   const timestamp = new Date()
-   console.log(timestamp)
-
-   const userBid = {
-      pieceId: piece.id,
-      pieceName: piece.name,
-      bidAmount: amount,
-      bidTime: timestamp,
-   }
-   const pieceBid = {
+   const timestamp = serverTimestamp()
+   const bid = {
       userId: user.uid,
       userName: user.displayName,
-      bidAmount: amount,
+      pieceId: piece.id,
+      pieceName: piece.name,
+      bidAmount: Number(amount),
       bidTime: timestamp,
    }
+   const pieceMod = {
+      highestBid: Number(amount),
+      highestBidderUid: user.uid,
+      highestBidder: user.displayName,
+      numberOfBids: piece.numberOfBids ? piece.numberOfBids + 1 : 1,
+   }
+   const userMod = {
+      numberOfBids: user.numberOfBids ? user.numberOfBids + 1 : 1,
+   }
    try {
-      await updateDoc(userRef, { bids: arrayUnion(userBid) })
-      await updateDoc(pieceRef, {
-         currentBid: amount,
-         highestBidder: user.displayName,
-         bids: arrayUnion(pieceBid),
-      })
-      console.log('Bid added Successfully')
+      const bidRef = await addDoc(collection(db, 'bids'), bid)
+      const pieceRef = doc(db, 'pieces', piece.id)
+      await updateDoc(pieceRef, pieceMod)
+      const userRef = doc(db, 'users', user.uid)
+      await updateDoc(userRef, userMod)
    } catch (error) {
       console.error('Error adding bid', error)
    }
+}
+
+//return all bids for one userId ordered by piece
+export async function getUserBids(userId) {
+   try {
+      const bidsCollection = collection(db, 'bids')
+      const userBidsQuery = query(
+         bidsCollection,
+         where('userId', '==', userId),
+         orderBy('bidTime', 'desc')
+      )
+      const snapshot = await getDocs(userBidsQuery)
+      const bids = snapshot.docs.map((bid) => ({
+         id: bid.id,
+         ...bid.data(),
+      }))
+
+      return bids
+   } catch (error) {
+      console.error('Error in userBidQuery ', error)
+   }
+}
+
+//returns number of bids for a userID
+export async function getUserBidCount(userId) {
+   try {
+      const bidsCollection = collection(db, 'bids')
+      const userBidsQuery = query(bidsCollection, where('userId', '==', userId))
+      const snapshot = await getCountFromServer(userBidsQuery)
+      return snapshot.data().count
+   } catch (error) {
+      console.error('Error getting user bid count: ', error)
+   }
+}
+
+export async function getPieceBids(pieceId) {
+   //add code to query and return all bids for specified piece
+   try {
+      const bidsCollection = collection(db, 'bids')
+      const pieceBidsQuery = query(
+         bidsCollection,
+         where('pieceId', '==', pieceId),
+         orderBy('bidTime', 'desc')
+      )
+      const snapshot = await getDocs(pieceBidsQuery)
+      const bids = snapshot.docs.map((bid) => ({
+         id: bid.id,
+         ...bid.data(),
+      }))
+
+      return bids
+   } catch (error) {
+      console.error('Error in userBidQuery ', error)
+   }
+}
+
+export async function getPieceBidCount(pieceId) {
+   try {
+      const bidsCollection = collection(db, 'bids')
+      const pieceBidsQuery = query(
+         bidsCollection,
+         where('pieceId', '==', pieceId)
+      )
+      const snapshot = await getCountFromServer(pieceBidsQuery)
+      return snapshot.data().count
+   } catch (error) {
+      console.error('Error in getPieceBidCount: ', error)
+   }
+}
+
+export async function userBidsForPiece(userId, pieceId) {
+   //add code to query all bids from specified user for specified piece
 }
 
 //image storage
@@ -209,10 +332,13 @@ const storage = getStorage()
 export async function imageUpload(file) {
    const filename = uuidv4()
    const metadata = {
-      contentType: 'image/jpeg',
+      contentType: 'image/webp',
    }
    try {
-      const storageRef = ref(storage, `piece-images/${filename}.jpeg`)
+      const storageRef = storeRef(
+         storage,
+         `piece-images/large/${filename}.webp`
+      )
       const snapshot = await uploadBytes(storageRef, file, metadata)
 
       const downloadURL = await getDownloadURL(snapshot.ref)

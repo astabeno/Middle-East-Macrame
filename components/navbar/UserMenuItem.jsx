@@ -5,7 +5,7 @@ function classNames(...classes) {
    return classes.filter(Boolean).join(' ')
 }
 
-export default function UserMenuItem({ name, href, key }) {
+export default function UserMenuItem({ name, href }) {
    return (
       <Menu.Item>
          {({ active }) => (

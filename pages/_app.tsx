@@ -1,20 +1,20 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { UserProvider } from '../contexts/userContext'
-import { PiecesProvider } from '../contexts/piecesContext'
+import { AuthProvider } from '../contexts/AuthContext'
 
 import MainLayout from '../components/layouts/MainLayout'
 
 export default function App({ Component, pageProps }: AppProps) {
    return (
       <>
-         <UserProvider>
-            <PiecesProvider>
+         <AuthProvider>
+            <UserProvider>
                <MainLayout>
                   <Component {...pageProps} />
                </MainLayout>
-            </PiecesProvider>
-         </UserProvider>
+            </UserProvider>
+         </AuthProvider>
       </>
    )
 }

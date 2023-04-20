@@ -32,12 +32,11 @@ export default function signUp() {
          alert("Password don't match!")
       }
       try {
-         const { user } = await createAuthUserWithEmailAndPassword(
+         const UserAuth = await createAuthUserWithEmailAndPassword(
             email,
             password
          )
-         await createUserDocumentFromAuth(user, { displayName })
-         console.log(`${user.displayName}`)
+         await createUserDocumentFromAuth(auth.user, { displayName })
          resetFields()
          router.push({
             pathname: '/',
@@ -68,7 +67,6 @@ export default function signUp() {
                   className="space-y-4 md:space-y-6"
                   onSubmit={onSubmitHandler}>
                   <Input
-                     className=""
                      type="text"
                      name="displayName"
                      label="Display Name"
@@ -120,7 +118,6 @@ export default function signUp() {
                   href="../login/">
                   Log in
                </Link>
-               .
             </div>
          </div>
       </div>

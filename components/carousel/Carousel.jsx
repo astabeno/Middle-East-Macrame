@@ -1,7 +1,10 @@
 import React, { useCallback } from 'react'
+
 import { useRouter } from 'next/router'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
+
+import PieceThumb from '../piece/PieceThumb'
 
 import { PrevButton, NextButton } from './EmblaArrows'
 
@@ -38,12 +41,7 @@ export default function Carousel({ pieces }) {
                         key={piece.id}
                         className={classes.embla_slide}
                         onClick={() => onSlideClick(piece.id)}>
-                        <img
-                           src={piece.url}
-                           alt={piece.name}
-                           className={classes.embla_slide_img}
-                        />
-                        <p>View {piece.name}</p>
+                        <PieceThumb piece={piece} />
                      </div>
                   )
                })}

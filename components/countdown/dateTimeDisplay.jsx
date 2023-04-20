@@ -3,15 +3,24 @@ import React from 'react'
 export default function DateTimeDisplay({ value, type, isDanger }) {
    let twStyles
    if (!isDanger) {
-      twStyles = 'countdown ml-2 flex flex-col items-center'
+      twStyles =
+         'countdown w-10 h-10 text-black rounded-lg bg-yellow-300 items-center flex flex-auto'
    } else {
-      twStyles = 'countdown ml-2 flex flex-col items-center text-red-600'
+      twStyles =
+         'countdown p-4 bg-black rounded-lg text-yellow-300 items-center flex flex-auto text-red-600'
    }
 
    return (
-      <div className={twStyles}>
-         <p className="m-0">{value}</p>
-         <span className="leading-non text-xs uppercase">{type}</span>
+      <div className="m-2 flex flex-col">
+         <div className={twStyles}>
+            <p className="mx-auto">{value}</p>
+         </div>
+
+         <span
+            className="leading-non text-center text-xs uppercase"
+            style={{ fontSize: 10 }}>
+            {type}
+         </span>
       </div>
    )
 }

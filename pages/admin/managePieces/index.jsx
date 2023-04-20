@@ -1,23 +1,24 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 
 import PieceGrid from '../../../components/managePieces/pieceGrid'
+import { getPiecesCollection } from '../../../utils/firebase.utils'
 
-export default function managePieces({ pieces }) {
+export default function managePieces() {
+   const [pieces, setPieces] = useState([])
+
+   useEffect(() => {
+      const getPieces = async () => {
+         const piecesCollection = await getPiecesCollection()
+         setPieces(piecesCollection)
+      }
+      getPieces()
+   }, [])
+
+   console.log(pieces)
+
    return (
       <div className="h-screen w-screen">
-         <PieceGrid pieces={pieces} />
+         {pieces.length > 0 && <PieceGrid pieces={pieces} />}
       </div>
    )
-}
-
-export async function getServerSideProps() {
-   const res = await fetch('http://localhost:3000/api/pieces')
-
-   const pieces = await res.json()
-
-   return {
-      props: {
-         pieces,
-      },
-   }
 }

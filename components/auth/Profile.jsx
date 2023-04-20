@@ -1,17 +1,31 @@
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../../contexts/userContext'
 import useUSDate from '../../hooks/useUSDate'
+import { getUserBidCount } from '../../utils/firebase.utils'
 
 import Input from '../form/Input'
 
 export default function ProfileComponent() {
-   const { currentUser, setCurrentUser } = useContext(UserContext)
-   const { displayName, email, createdAt, bids, userType } = currentUser
+   const { currentUser } = useContext(UserContext)
+   const [userBidCount, setUserBidCount] = useState(0)
+
+   const { displayName, userType, createdAt, email, numberOfBids, uid } =
+      currentUser
+
    const initialsMatch = displayName.match(/\b(\w)/g)
    const initials = initialsMatch.join('')
 
+   useEffect(() => {
+      const getBidCount = async () => {
+         const count = await getUserBidCount(uid)
+         setUserBidCount(count)
+      }
+      getBidCount()
+   })
+
    const dateSignedup = useUSDate(createdAt.toDate())
-   const numberOfBids = bids ? bids.length : 0
+
+   //const bidCount = useUserBidCount(currentUser.uid)
 
    return (
       <div className="justify container m-auto w-3/4 rounded-md bg-white p-8 shadow-2xl">
@@ -19,7 +33,7 @@ export default function ProfileComponent() {
          {userType === 'admin' ? (
             <p className="fon text-center">{userType}</p>
          ) : (
-            <p></p>
+            <p>bidder</p>
          )}
          <hr className="my-5" />
          <div className="flex flex-row">
@@ -45,7 +59,7 @@ export default function ProfileComponent() {
                      Bids{' '}
                   </span>
                   <span className="mb-3 text-sm text-blue-500">
-                     {numberOfBids}
+                     {userBidCount}
                   </span>
                   <div className="flex flex-row justify-between">
                      <div>

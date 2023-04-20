@@ -11,12 +11,14 @@ export default function CountdownTimer({ targetDate, large }) {
       return <ExpiredNotice large={large} />
    }
    return (
-      <ShowCounter
-         large={large}
-         days={days}
-         hours={hours}
-         minutes={minutes}
-         seconds={seconds}
-      />
+      <>
+         <ShowCounter
+            large={large}
+            days={days}
+            hours={hours}
+            minutes={minutes}
+            seconds={seconds}
+         />
+      </>
    )
 }

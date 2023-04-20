@@ -1,11 +1,14 @@
+import { useContext, useEffect } from 'react'
 import { Sansita_Swashed } from '@next/font/google'
+import { app, getPiecesCollection } from '../utils/firebase.utils'
+import { AuthContext } from '../contexts/AuthContext'
+
+import Carousel from '../components/carousel/Carousel'
 
 const titleFont = Sansita_Swashed({
    weight: '400',
    subsets: ['latin'],
 })
-
-import Carousel from '../components/carousel/Carousel'
 
 export interface Piece {
    id: string
@@ -32,9 +35,24 @@ export default function Home({ pieces }: HomeProps) {
 }
 
 export async function getStaticProps() {
-   const res = await fetch('http://localhost:3000/api/pieces')
+   const piecesCollection = await getPiecesCollection()
+   console.log(piecesCollection)
+   const pieces = piecesCollection.map((piece) => {
+      if (!piece.dateUpdated) {
+         return {
+            ...piece,
+            auctionEnd: piece.auctionEnd.toMillis(),
+            dateAdded: piece.dateAdded.toMillis(),
+         }
+      }
 
-   const pieces = await res.json()
+      return {
+         ...piece,
+         auctionEnd: piece.auctionEnd.toMillis(),
+         dateAdded: piece.dateAdded.toMillis(),
+         dateUpdated: piece.dateUpdated?.toMillis(),
+      }
+   })
 
    return {
       props: {

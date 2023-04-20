@@ -4,31 +4,26 @@ import DateTimeDisplay from './DateTimeDisplay'
 
 export default function ShowCounter({ days, hours, minutes, seconds, large }) {
    const largeClassNames =
-      'items-center justify-center rounded-md border border-gray-300 text-lg font-bold leading-7 text-black hover:bg-gray-200'
+      'items-center justify-center rounded-md border bg-gray-700 border-gray-300 text-lg font-bold leading-7 text-white'
 
    return (
-      <div className="p2">
+      <div className="p1">
+         <p className="text m-auto text-center text-sm">Time left to bid</p>
          <div
-            className={`flex py-2 px-4 text-black ${
-               large ? largeClassNames : ''
-            }`}>
-            <DateTimeDisplay value={days} type={'Days'} isDanger={days <= 3} />
-            <p>:</p>
-            <DateTimeDisplay
-               value={hours}
-               type={'Hours'}
-               isDanger={days <= 3}
-            />
-            <p>:</p>
+            className={`flex py-1 text-black ${large ? largeClassNames : ''}`}>
+            <DateTimeDisplay value={days} type={'Day'} isDanger={days <= 3} />
+
+            <DateTimeDisplay value={hours} type={'Hour'} isDanger={days <= 3} />
+
             <DateTimeDisplay
                value={minutes}
-               type={'Mins'}
+               type={'Min'}
                isDanger={days <= 3}
             />
-            <p>:</p>
+
             <DateTimeDisplay
                value={seconds}
-               type={'Seconds'}
+               type={'Sec'}
                isDanger={days <= 3}
             />
          </div>

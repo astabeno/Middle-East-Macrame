@@ -23,7 +23,6 @@ export default function Input({
             name={name}
             value={value}
             onChange={onChange}
-            id={props.id ? props.id : ''}
             className={!disabled ? enabledInput : disabledInput}
             placeholder={props.placeholder ? props.placeholder : ''}
             required={isRequired}

@@ -1,6 +1,6 @@
 // import pieceList from '../../data/pieces.json'
 
-import Piece from '../../components/piece/Piece'
+import Piece from '../../../components/piece/Piece'
 
 export default function PieceInfo({ piece }) {
    return (
@@ -20,15 +20,15 @@ export async function getStaticPaths() {
 
    return {
       paths,
-      fallback: false,
+      fallback: 'blocking',
    }
 }
 
 export async function getStaticProps(context) {
-   const res = await fetch('http://localhost:3000/api/pieces')
-   const pieces = await res.json()
+   const res = await fetch(
+      `http://localhost:3000/api/pieces/${context.params.id}`
+   )
+   const piece = await res.json()
 
-   const piece = pieces.find((item) => item.id == context.params.id)
-
-   return { props: { piece } }
+   return { props: { piece }, revalidate: 10 }
 }
