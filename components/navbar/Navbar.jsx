@@ -7,6 +7,8 @@ import {
    UserCircleIcon,
 } from '@heroicons/react/24/outline'
 
+import heroBellOutline from '../../public/heroBellOutline.svg'
+
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -15,6 +17,7 @@ import { navlinks } from './navlinks'
 import LoginModal from './LoginModal'
 import UserMenu from './UserMenu'
 import Message from '../message/Message'
+import Notifications from './Notifications'
 
 //user Context
 import { UserContext } from '../../contexts/userContext'
@@ -99,16 +102,8 @@ export default function Navbar() {
                         {currentUser ? (
                            <>
                               <Message text="After Login" />
-                              <button
-                                 type="button"
-                                 className="rounded-full bg-gray-800 p-1 text-gray-400 
-                            hover:text-white focus:outline-none focus:ring-2 
-                            focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                 <span className="sr-only">
-                                    View notifications
-                                 </span>
-                                 <BellIcon className="h-6 w-6" />
-                              </button>
+
+                              <Notifications />
                               <UserMenu />
                            </>
                         ) : (

@@ -45,7 +45,6 @@ export async function getStaticProps() {
             dateAdded: piece.dateAdded.toMillis(),
          }
       }
-
       return {
          ...piece,
          auctionEnd: piece.auctionEnd.toMillis(),

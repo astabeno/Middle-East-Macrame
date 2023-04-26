@@ -72,7 +72,6 @@ export default function Piece({ piece }) {
             </div>
             <Image
                src={url}
-               classNamen="w-full h-auto"
                width={500}
                height={500}
                sizes="100vw"

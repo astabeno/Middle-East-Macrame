@@ -22,27 +22,12 @@ import {
    addDoc,
    updateDoc,
    deleteDoc,
-   QuerySnapshot,
-   arrayUnion,
    Timestamp,
    serverTimestamp,
    orderBy,
 } from 'firebase/firestore'
 
-import {
-   getDatabase,
-   ref as rtref,
-   push,
-   set,
-   limitToLast,
-   query as rtquery,
-   onChildAdded,
-   orderByChild,
-   equalTo,
-   once,
-   collection as rtCollection,
-   where as rtwhere,
-} from 'firebase/database'
+import outBidEmail from '../utils/outBidEmail'
 
 import {
    getDownloadURL,
@@ -77,7 +62,6 @@ googleProvider.setCustomParameters({ promt: 'select_account' })
 export const auth = getAuth()
 //create db link
 export const db = getFirestore()
-export const rtdb = getDatabase()
 export const functions = getFunctions()
 
 export const createUserDocumentFromAuth = async (
@@ -134,6 +118,34 @@ export const getUserDocument = async (uid) => {
       } catch (error) {
          console.error('Error creating user document', error)
       }
+   }
+}
+
+export async function getNotifications(uid) {
+   const notificationsSnapshot = await getDocs(
+      collection(db, 'users', uid, 'notifications')
+   )
+   const notifications = notificationsSnapshot.docs.map((notification) => ({
+      id: notification.id,
+      ...notification.data(),
+      time: notification.data().time.toDate(),
+   }))
+   console.log(notifications)
+
+   return notifications
+}
+
+export async function addNotification(notification) {
+   try {
+      const userNotificationsCol = collection(
+         db,
+         'users',
+         piece.highestBidderUid,
+         'notifications'
+      )
+      await addDoc(userNotificationsCol, notification)
+   } catch (error) {
+      console.error('error adding notification', error)
    }
 }
 
@@ -203,7 +215,6 @@ export async function addPiece(pieceInfo) {
 }
 
 export async function updatePiece(pieceInfo) {
-   console.log(`from firebase utils: ${pieceInfo.auctionEnd}`)
    const updatedPiece = {
       name: pieceInfo.name,
       dimensions: pieceInfo.dimensions,
@@ -238,14 +249,38 @@ export async function placeBid(user, piece, amount) {
       highestBid: Number(amount),
       highestBidderUid: user.uid,
       highestBidder: user.displayName,
+      highestBidderEmail: user.email,
       numberOfBids: piece.numberOfBids ? piece.numberOfBids + 1 : 1,
    }
    const userMod = {
       numberOfBids: user.numberOfBids ? user.numberOfBids + 1 : 1,
    }
+   const notification = {
+      title: 'Outbid',
+      text: `You have been outbid for piece ${piece.name}!  The new
+      price is now $${bid.bidAmount}.  Go back and place a new bid 
+      if you still by clicking the link below to stay in the lead.`,
+      time: timestamp,
+      pieceUrl: `/pieces/${piece.id}`,
+      pieceName: piece.name,
+   }
+
+   await addNotification(notification)
+
    try {
       const bidRef = await addDoc(collection(db, 'bids'), bid)
       const pieceRef = doc(db, 'pieces', piece.id)
+
+      if (piece.highestBidder && piece.highestBidderUid !== user.uid) {
+         console.log(amount)
+
+         await outBidEmail(
+            piece.highestBidderEmail,
+            piece.highestBidder,
+            piece.name,
+            amount
+         )
+      }
       await updateDoc(pieceRef, pieceMod)
       const userRef = doc(db, 'users', user.uid)
       await updateDoc(userRef, userMod)

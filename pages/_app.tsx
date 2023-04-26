@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { UserProvider } from '../contexts/userContext'
@@ -6,6 +7,18 @@ import { AuthProvider } from '../contexts/AuthContext'
 import MainLayout from '../components/layouts/MainLayout'
 
 export default function App({ Component, pageProps }: AppProps) {
+   useEffect(() => {
+      // Fetch request to trigger the /api/auctionEndTasks API route
+      fetch('/api/auctionEndTasks')
+         .then((response) => {
+            if (response.ok) {
+               console.log('API call successful')
+            } else {
+               console.error('API call failed')
+            }
+         })
+         .catch((error) => console.error('API call error:', error))
+   }, [])
    return (
       <>
          <AuthProvider>

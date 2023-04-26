@@ -32,10 +32,7 @@ export default function signUp() {
          alert("Password don't match!")
       }
       try {
-         const UserAuth = await createAuthUserWithEmailAndPassword(
-            email,
-            password
-         )
+         const auth = await createAuthUserWithEmailAndPassword(email, password)
          await createUserDocumentFromAuth(auth.user, { displayName })
          resetFields()
          router.push({
