@@ -20,21 +20,30 @@ cron.schedule('* * * * *', async () => {
 
       // Loop through the pieces collection and schedule email sending for each piece
       for (const piece of pieces) {
-         const { auctionEnd, highestBidder, highestBidderEmail, highestBid } =
-            piece
+         const {
+            auctionEnd,
+            highestBidder,
+            highestBidderEmail,
+            highestBid,
+            name,
+         } = piece
 
          // Convert auctionEnd date to a JavaScript Date object
          const auctionEndTime = new Date(auctionEnd.seconds * 1000)
 
          // Check if auctionEnd date is reached
          if (auctionEndTime <= new Date()) {
+            console.log(`executing auctionFinishedTasks for piece ${name}`)
+            // Add Notification in highestBidders
+
             // Send email to the highest bidder using Nodemailer
             const mailOptions = {
                from: process.env.EMAIL_ADDRESS,
                to: highestBidderEmail,
                subject: `Auction for ${piece.name} Ended`,
-               text: `Congratulations ${piece.highestBidder}! You won the auction the macrame piece '${piece.name}' 
-                      with the highest bid of $${highestBid}.`,
+               text: `Congratulations ${piece.highestBidder}! You won the 
+                      auction the macrame piece '${piece.name}' with the 
+                      highest bid of $${highestBid}.`,
             }
             console.log(piece)
             await transporter.sendMail(mailOptions)

@@ -16,7 +16,7 @@ export default async (req, res) => {
       from: process.env.EMAIL_ADDRESS,
       ...req.body,
    }
-   console.log(req.body)
+
    transporter.verify(function (error, success) {
       if (error) {
          console.log(error)
