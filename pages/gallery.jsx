@@ -5,7 +5,12 @@ export default function gallery({ pieces }) {
    return (
       <div className="flex flex-wrap">
          {pieces.map((piece) => {
-            return <PieceThumb piece={piece} />
+            const pieceFormatted = {
+               ...piece,
+               auctionEnd: new Date(piece.auctionEnd),
+            }
+            console.log(pieceFormatted)
+            return <PieceThumb piece={pieceFormatted} showCounter />
          })}
       </div>
    )

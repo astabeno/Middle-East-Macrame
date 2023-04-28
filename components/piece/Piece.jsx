@@ -67,9 +67,18 @@ export default function Piece({ piece }) {
    return (
       <div className={`${classes.piece_container} shadow-2xl`}>
          <div className="relative h-[500px] w-[500px] lg:h-[1000px] lg:w-[1000px]">
-            <div className="h-15 relative bg-green-500 p-2 text-center text-3xl font-extrabold text-white">
-               You are Winning
-            </div>
+            {auctionActive ? (
+               <div className="h-15 relative bg-yellow-500 p-2 text-center text-3xl font-extrabold text-white">
+                  <CountdownTimer
+                     targetDate={useTimestampToMils(auctionEnd)}
+                     large
+                  />
+               </div>
+            ) : (
+               <div className="h-15 relative bg-red-500 p-2 text-center text-3xl font-extrabold text-white">
+                  Piece Sold for ${piece.highestBid}
+               </div>
+            )}
             <Image
                src={url}
                width={500}
@@ -155,10 +164,6 @@ export default function Piece({ piece }) {
                      </div>
                   )}
                </form>
-               <CountdownTimer
-                  targetDate={useTimestampToMils(auctionEnd)}
-                  large
-               />
             </div>
          </div>
       </div>

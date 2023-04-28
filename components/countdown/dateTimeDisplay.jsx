@@ -7,11 +7,11 @@ export default function DateTimeDisplay({ value, type, isDanger }) {
          'countdown w-10 h-10 text-black rounded-lg bg-yellow-300 items-center flex flex-auto'
    } else {
       twStyles =
-         'countdown p-4 bg-black rounded-lg text-yellow-300 items-center flex flex-auto text-red-600'
+         'countdown p-2 bg-black rounded-lg text-yellow-300 items-center flex flex-auto text-red-600'
    }
 
    return (
-      <div className="m-2 flex flex-col">
+      <div className="m-1 flex flex-col">
          <div className={twStyles}>
             <p className="mx-auto">{value}</p>
          </div>

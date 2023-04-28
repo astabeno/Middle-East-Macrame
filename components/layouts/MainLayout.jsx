@@ -1,4 +1,5 @@
 import Navbar from '../navbar/Navbar'
+import Footer from './Footer'
 import Message from '../message/Message'
 import { useRouter } from 'next/router'
 
@@ -20,6 +21,7 @@ export default function MainLayout({ children }) {
 
          {/* Footer if needed */}
          {/* Anything Else to be on all pages */}
+         <Footer />
       </div>
    )
 }

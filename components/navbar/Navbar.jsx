@@ -65,7 +65,7 @@ export default function Navbar() {
                         <div className="flex flex-shrink-0 items-center">
                            <img
                               className="block h-8 w-auto lg:hidden"
-                              src="/jslogo.png"
+                              src="/middleEastMacrame.svg"
                               alt="Macrame By Jacob"
                            />
                            <img

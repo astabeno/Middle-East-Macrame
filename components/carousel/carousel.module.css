@@ -1,24 +1,23 @@
 .embla {
+   position: relative;
    --slide-spacing: 2rem;
    --slide-size: 30%;
    --slide-height: 19rem;
-   height: 500px;
-   margin: 5px;
+   height: 450px;
+
    /* border: 1px solid red; */
 }
 
 .embla_viewport {
    position: relative;
    overflow: hidden;
-   max-width: 1200px;
-   height: 500px;
+   height: 450px;
+   width: 100%;
    margin: 0 auto;
-   /* border: 1px solid green; */
 }
 
 .embla_container {
    display: flex;
-   /* border: 1px solid blue; */
    margin: 1.3rem auto;
 }
 

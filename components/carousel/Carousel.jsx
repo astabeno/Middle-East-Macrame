@@ -37,11 +37,11 @@ export default function Carousel({ pieces }) {
             <div className={classes.embla_container}>
                {pieces.map((piece) => {
                   return (
-                     <div
-                        key={piece.id}
-                        className={classes.embla_slide}
-                        onClick={() => onSlideClick(piece.id)}>
-                        <PieceThumb piece={piece} />
+                     <div key={piece.id} onClick={() => onSlideClick(piece.id)}>
+                        <PieceThumb
+                           piece={piece}
+                           className="emblaSlide hover:"
+                        />
                      </div>
                   )
                })}

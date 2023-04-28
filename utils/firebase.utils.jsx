@@ -135,14 +135,9 @@ export async function getNotifications(uid) {
    return notifications
 }
 
-export async function addNotification(notification) {
+export async function addNotification(notification, uid) {
    try {
-      const userNotificationsCol = collection(
-         db,
-         'users',
-         piece.highestBidderUid,
-         'notifications'
-      )
+      const userNotificationsCol = collection(db, 'users', uid, 'notifications')
       await addDoc(userNotificationsCol, notification)
    } catch (error) {
       console.error('error adding notification', error)
@@ -233,6 +228,24 @@ export async function deletePiece(pieceID) {
    await deleteDoc(doc(db, 'pieces', pieceID))
 }
 
+export async function pieceAuctionEnd(pieceId, headers) {
+   console.log(`from auctionEnd function`)
+   const pieceRef = doc(db, 'pieces', pieceId)
+   try {
+      await updateDoc(
+         pieceRef,
+         { notified: true },
+         {
+            headers: {
+               Authorization: headers,
+            },
+         }
+      )
+   } catch (error) {
+      console.log('error updating notification status for piece.')
+   }
+}
+
 //Bids Functions
 
 export async function placeBid(user, piece, amount) {
@@ -265,7 +278,7 @@ export async function placeBid(user, piece, amount) {
       pieceName: piece.name,
    }
 
-   await addNotification(notification)
+   await addNotification(notification, piece.highestBidderUid)
 
    try {
       const bidRef = await addDoc(collection(db, 'bids'), bid)

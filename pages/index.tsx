@@ -1,11 +1,9 @@
-import { useContext, useEffect } from 'react'
-import { Sansita_Swashed } from '@next/font/google'
-import { app, getPiecesCollection } from '../utils/firebase.utils'
-import { AuthContext } from '../contexts/AuthContext'
+import { Cinzel_Decorative } from '@next/font/google'
+import { getPiecesCollection } from '../utils/firebase.utils'
 
 import Carousel from '../components/carousel/Carousel'
 
-const titleFont = Sansita_Swashed({
+const titleFont = Cinzel_Decorative({
    weight: '400',
    subsets: ['latin'],
 })
@@ -25,7 +23,7 @@ export default function Home({ pieces }: HomeProps) {
    return (
       <>
          <div className="site-title">
-            <h1 className={titleFont.className}>Macrame By Jacob</h1>
+            <h1 className={titleFont.className}>Middle East Macrame</h1>
          </div>
          <section>
             <Carousel pieces={pieces} />
