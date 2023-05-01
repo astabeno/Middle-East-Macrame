@@ -125,13 +125,12 @@ export async function getNotifications(uid) {
    const notificationsSnapshot = await getDocs(
       collection(db, 'users', uid, 'notifications')
    )
+
    const notifications = notificationsSnapshot.docs.map((notification) => ({
       id: notification.id,
       ...notification.data(),
       time: notification.data().time.toDate(),
    }))
-   console.log(notifications)
-
    return notifications
 }
 
@@ -228,7 +227,7 @@ export async function deletePiece(pieceID) {
    await deleteDoc(doc(db, 'pieces', pieceID))
 }
 
-export async function pieceAuctionEnd(pieceId, headers) {
+export async function pieceAuctionEnd(pieceId, authToken) {
    console.log(`from auctionEnd function`)
    const pieceRef = doc(db, 'pieces', pieceId)
    try {
@@ -237,7 +236,28 @@ export async function pieceAuctionEnd(pieceId, headers) {
          { notified: true },
          {
             headers: {
-               Authorization: headers,
+               Authorization: authToken,
+            },
+         }
+      )
+   } catch (error) {
+      console.log('error updating notification status for piece.')
+   }
+}
+export async function extendTime(pieceId, authToken, days) {
+   console.log(`from auctionEnd function`)
+   const pieceRef = doc(db, 'pieces', pieceId)
+   try {
+      await updateDoc(
+         pieceRef,
+         {
+            auctionEnd: Timestamp.fromDate(
+               new Date(today.getTime() + days * 24 * 60 * 60 * 1000)
+            ),
+         },
+         {
+            headers: {
+               Authorization: authToken,
             },
          }
       )
@@ -274,6 +294,8 @@ export async function placeBid(user, piece, amount) {
       price is now $${bid.bidAmount}.  Go back and place a new bid 
       if you still by clicking the link below to stay in the lead.`,
       time: timestamp,
+      read: false,
+      visible: true,
       pieceUrl: `/pieces/${piece.id}`,
       pieceName: piece.name,
    }

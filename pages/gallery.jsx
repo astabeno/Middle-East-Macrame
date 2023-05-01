@@ -10,7 +10,7 @@ export default function gallery({ pieces }) {
                auctionEnd: new Date(piece.auctionEnd),
             }
             console.log(pieceFormatted)
-            return <PieceThumb piece={pieceFormatted} showCounter />
+            return <PieceThumb piece={pieceFormatted} key={piece.id} />
          })}
       </div>
    )

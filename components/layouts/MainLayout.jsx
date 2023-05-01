@@ -3,18 +3,11 @@ import Footer from './Footer'
 import Message from '../message/Message'
 import { useRouter } from 'next/router'
 
-import { Inter } from '@next/font/google'
-
-const murecho = Inter({
-   weight: '400',
-   subsets: ['latin'],
-})
-
 export default function MainLayout({ children }) {
    const router = useRouter()
    const { message } = router.query
    return (
-      <div className={`page-layout h-screen ${murecho.className}`}>
+      <div className="flex h-screen flex-col justify-between">
          <Navbar />
          {message ? <Message text={message} /> : <></>}
          <div className="">{children}</div>

@@ -9,4 +9,6 @@ if (!firebaseAdmin.apps.length) {
    })
 }
 
+firebaseAdmin.auth()
+
 export default firebaseAdmin

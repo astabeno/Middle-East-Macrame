@@ -2,7 +2,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import CountdownTimer from '../../components/countdown/CountdownTimer'
 
+import { Cinzel_Decorative } from '@next/font/google'
+
+const titleFont = Cinzel_Decorative({
+   weight: '400',
+   subsets: ['latin'],
+})
+
 export default function PieceThumb({ piece, showCounter }) {
+   console.log(titleFont)
    return (
       <Link href={`/pieces/${piece.id}`}>
          {showCounter ? <CountdownTimer /> : <></>}
@@ -18,8 +26,10 @@ export default function PieceThumb({ piece, showCounter }) {
                />
             </div>
             <div
-               className="name-banner h-10 bg-gray-800 pt-2 
-                          text-center text-white opacity-70 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
+               className={`${titleFont.className} name-banner h-10 bg-gray-800 pt-2 
+                          text-center text-white opacity-70 
+                          transition-opacity duration-500 ease-in-out 
+                          group-hover:opacity-100`}>
                {piece.name}
             </div>
          </div>

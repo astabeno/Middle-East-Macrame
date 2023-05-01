@@ -4,6 +4,9 @@ import classes from './piece.module.css'
 import { Button } from '@material-tailwind/react'
 
 import CountdownTimer from '../countdown/CountdownTimer'
+import PieceBidImage from './PieceBidImage'
+import BidForm from './BidForm'
+import Input from '../form/Input'
 
 import { UserContext } from '../../contexts/userContext'
 import useLatestBid from '../../hooks/useLatestBid'
@@ -12,7 +15,12 @@ import useTimestampToMils from '../../hooks/useTimestampToMils'
 
 import { placeBid, getPieceBidCount } from '../../utils/firebase.utils'
 
-import Input from '../form/Input'
+import { Cinzel_Decorative, David_Libre } from '@next/font/google'
+
+const titleFont = Cinzel_Decorative({
+   weight: '400',
+   subsets: ['latin'],
+})
 
 export default function Piece({ piece }) {
    const {
@@ -65,106 +73,19 @@ export default function Piece({ piece }) {
    }
 
    return (
-      <div className={`${classes.piece_container} shadow-2xl`}>
-         <div className="relative h-[500px] w-[500px] lg:h-[1000px] lg:w-[1000px]">
-            {auctionActive ? (
-               <div className="h-15 relative bg-yellow-500 p-2 text-center text-3xl font-extrabold text-white">
-                  <CountdownTimer
-                     targetDate={useTimestampToMils(auctionEnd)}
-                     large
-                  />
-               </div>
-            ) : (
-               <div className="h-15 relative bg-red-500 p-2 text-center text-3xl font-extrabold text-white">
-                  Piece Sold for ${piece.highestBid}
-               </div>
-            )}
-            <Image
-               src={url}
-               width={500}
-               height={500}
-               sizes="100vw"
-               alt={name}
-            />
+      <div
+         className=" mx-auto mb-5 flex w-full flex-col overflow-hidden
+                     rounded-lg bg-white shadow-2xl sm:max-w-lg  sm:flex-col 
+                     md:max-w-2xl md:flex-row lg:max-w-3xl lg:flex-row xl:flex-row">
+         <div className="xl:6/12  md:w-6/12 lg:w-6/12">
+            <PieceBidImage piece={piece} auctionActive={auctionActive} />
          </div>
-         <div className="w-full space-y-3 p-3">
-            <h1 className="text-center text-4xl">{name}</h1>
-
-            <div className="rounded border border-gray-200 p-2 shadow-inner">
-               <span className="text-sm text-gray-600">{description}</span>
-            </div>
-            <div>
-               <form className="flex flex-col" onSubmit={submitBid}>
-                  <div className="space-y-3">
-                     {currentUser ? (
-                        <Input
-                           type="text"
-                           name="highestBidder"
-                           label="highest Bidder"
-                           disabled
-                           value={
-                              latestBid.bidderId === currentUser.uid
-                                 ? 'You are winning'
-                                 : 'You are not winning'
-                           }
-                        />
-                     ) : (
-                        <></>
-                     )}
-
-                     <Input
-                        type="number"
-                        name="numberOfBids"
-                        label="Number of Bids"
-                        disabled
-                        value={pieceBidCount}
-                     />
-                     <Input
-                        type="number"
-                        name="highestBid"
-                        label="Highest Bid"
-                        disabled
-                        value={highestBid}
-                     />
-                     <Input
-                        type="number"
-                        name="bid"
-                        label="New Bid"
-                        id="bid"
-                        onChange={handleBidChange}
-                        value={newBid}
-                        disabled={!auctionActive}
-                     />
-                  </div>
-                  {auctionActive ? (
-                     <div className="my-5 mx-auto">
-                        {currentUser ? (
-                           <Button
-                              type="submit"
-                              className="w-60 bg-stone-200 text-stone-700">
-                              Place Bid
-                           </Button>
-                        ) : (
-                           <Button
-                              type="submit"
-                              className="w-60 bg-stone-700 text-stone-400"
-                              disabled>
-                              Sign In to Bid
-                           </Button>
-                        )}
-                     </div>
-                  ) : (
-                     <div className="my-5 mx-auto">
-                        <Button
-                           type="submit"
-                           className="w-60 bg-stone-700 text-stone-400"
-                           disabled>
-                           Auction Finished
-                        </Button>
-                     </div>
-                  )}
-               </form>
-            </div>
+         <div className="xl:6/12 p-8  md:w-6/12 lg:w-6/12">
+            <h1
+               className={`${titleFont.className} w-full text-center text-2xl`}>
+               {piece.name}
+            </h1>
+            <BidForm piece={piece} auctionActive={auctionActive} />
          </div>
       </div>
    )

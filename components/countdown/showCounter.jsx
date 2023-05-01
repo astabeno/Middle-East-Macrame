@@ -7,8 +7,7 @@ export default function ShowCounter({ days, hours, minutes, seconds, large }) {
       'items-center justify-center rounded-md border border-gray-300 text-lg font-bold leading-7'
 
    return (
-      <div className="">
-         <p className="m-auto text-center text-lg">Time left to bid</p>
+      <div>
          <div className={`flex py-1  ${large ? largeClassNames : ''}`}>
             {days > 0 ? (
                <>
@@ -20,6 +19,11 @@ export default function ShowCounter({ days, hours, minutes, seconds, large }) {
                   <DateTimeDisplay
                      value={hours}
                      type={'Hour'}
+                     isDanger={days <= 3}
+                  />
+                  <DateTimeDisplay
+                     value={minutes}
+                     type={'Min'}
                      isDanger={days <= 3}
                   />
                </>

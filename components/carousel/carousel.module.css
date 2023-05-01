@@ -24,7 +24,7 @@
 .embla_slide {
    flex: 0 0 auto;
    min-width: 0;
-   max-width: 100%;
+   max-width: 250px;
    top: 50%;
    height: 93%;
    position: relative;

@@ -1,12 +1,12 @@
 import nodemailer from 'nodemailer'
 
 let transporter = nodemailer.createTransport({
-   service: 'yahoo',
+   service: 'privateemail',
    auth: {
       user: process.env.EMAIL,
       pass: process.env.PASSWORD,
    },
-   host: 'smtp.mail.yahoo.com',
+   host: 'mail.privateemail.com',
    port: 465,
    secure: true,
 })
