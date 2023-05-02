@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
 import CountdownTimer from '../countdown/CountdownTimer'
-import { getPieceBidCount } from '../../utils/firebase.utils'
 
 export default function PieceGrid({ pieces }) {
    const router = useRouter()
@@ -27,7 +26,7 @@ export default function PieceGrid({ pieces }) {
                return (
                   <>
                      <div
-                        className="grid h-20 grid-cols-4 border-b bg-slate-100 shadow-sm
+                        className="bg-slate-100 grid h-20 grid-cols-4 border-b shadow-sm
                                     hover:-translate-x-1 hover:-translate-y-1 hover:shadow-lg"
                         onClick={() => {
                            selectHandler(id)

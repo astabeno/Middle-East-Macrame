@@ -1,7 +1,7 @@
 import PieceThumb from '../components/piece/PieceThumb'
 import { getPiecesCollection } from '../utils/firebase.utils'
 
-export default function gallery({ pieces }) {
+export default function Gallery({ pieces }) {
    return (
       <div className="flex flex-wrap">
          {pieces.map((piece) => {

@@ -3,7 +3,7 @@ import { getPieceBids } from '../../../utils/firebase.utils'
 
 import React from 'react'
 
-export default function bids({ bids }) {
+export default function Bids({ bids }) {
    const pieceName = bids[0].pieceName
    return (
       <div className="my-6 mx-auto w-11/12 rounded-2xl bg-white p-8 shadow-lg">

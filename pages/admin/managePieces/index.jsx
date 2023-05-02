@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import PieceGrid from '../../../components/managePieces/pieceGrid'
 import { getPiecesCollection } from '../../../utils/firebase.utils'
 
-export default function ManagePieces() {
+export default function ManagePiecesPage() {
    const [pieces, setPieces] = useState([])
 
    useEffect(() => {

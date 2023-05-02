@@ -6,7 +6,7 @@ import UserBidsGrid from '../../components/bids/userBidsGrid'
 
 import { getUserBids } from '../../utils/firebase.utils'
 
-export default function bids() {
+export default function Bids() {
    const { currentUser } = useContext(UserContext)
    const { displayName } = currentUser
    const [userBids, setUserBids] = useState([])
