@@ -16,7 +16,7 @@ const defaultFormFields = {
    confirmPassword: '',
 }
 
-export default function signUp() {
+export default function SignUp() {
    const router = useRouter()
    const [formFields, setFormFields] = useState(defaultFormFields)
    const { displayName, email, password, confirmPassword } = formFields

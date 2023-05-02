@@ -1,13 +1,10 @@
-import { useEffect, useState, useContext } from 'react'
-import { UserContext } from '../../../contexts/userContext'
-import SuperJSON from 'superjson'
+import { useEffect, useState } from 'react'
+
 import useTimestampToDateTime from '../../../hooks/useTimestampToDateTime'
-
 import { getPiece } from '../../../utils/firebase.utils'
-
 import ManagePiece from '../../../components/admin/ManagePiece'
 
-export default function managePiece({ id }) {
+export default function ManagePiece({ id }) {
    const [piece, setPiece] = useState(null)
    const dateTime = useTimestampToDateTime(piece?.auctionEnd) // Call hook conditionally
 
