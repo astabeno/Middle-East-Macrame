@@ -4,7 +4,7 @@ import useTimestampToDateTime from '../../../hooks/useTimestampToDateTime'
 import { getPiece } from '../../../utils/firebase.utils'
 import ManagePiece from '../../../components/admin/ManagePiece'
 
-export default function ManagePiece({ id }) {
+export default function ManagePiecePage({ id }) {
    const [piece, setPiece] = useState(null)
    const dateTime = useTimestampToDateTime(piece?.auctionEnd) // Call hook conditionally
 
