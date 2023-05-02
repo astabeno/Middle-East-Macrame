@@ -49,8 +49,6 @@ export default function Carousel({ pieces }) {
             <PrevButton onClick={scrollPrev} />
             <NextButton onClick={scrollNext} />
          </div>
-
-         {/* <style jsx>{carouselStyles}</style> */}
       </div>
    )
 }
