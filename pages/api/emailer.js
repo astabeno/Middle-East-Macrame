@@ -11,19 +11,6 @@ let transporter = nodemailer.createTransport({
    secure: true,
 })
 
-function enableCORS(req, res, next) {
-   res.setHeader('Access-Control-Allow-Origin', 'www.middleeastmacrame.com')
-
-   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-   if (req.method === 'OPTIONS') {
-      // Handle preflight request
-      res.status(200).end()
-   } else {
-      next()
-   }
-}
-
 export async function emailer(req, res) {
    if (req.method === 'OPTIONS') {
       // Handle preflight request
@@ -47,13 +34,3 @@ export async function emailer(req, res) {
       res.status(500).json({ error: 'Failed to send email' })
    }
 }
-
-// Enable CORS for the emailer API route
-export const config = {
-   api: {
-      bodyParser: false,
-   },
-   middleware: [{ handler: enableCORS }],
-}
-
-export default enableCORS(emailer)
