@@ -17,7 +17,6 @@ export default function Bids({ bids }) {
 export async function getServerSideProps(context) {
    const pieceBids = await getPieceBids(context.params.id)
 
-   console.log(pieceBids)
    const bids = pieceBids.map((bid) => ({
       ...bid,
       bidTime: bid.bidTime.toMillis(),

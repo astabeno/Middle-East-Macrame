@@ -1,8 +1,10 @@
-// import pieceList from '../../data/pieces.json'
+import { getPiecesCollection, getPiece } from '../../../utils/firebase.utils'
+import SuperJSON from 'superjson'
 
 import Piece from '../../../components/piece/Piece'
 
-export default function PieceInfo({ piece }) {
+export default function PieceInfo({ pieceString }) {
+   const piece = SuperJSON.parse(pieceString)
    return (
       <div className="centered">
          <Piece piece={piece} />
@@ -11,8 +13,7 @@ export default function PieceInfo({ piece }) {
 }
 
 export async function getStaticPaths() {
-   const res = await fetch('https://www.middleeastmacrame.com/api/pieces')
-   const pieces = await res.json()
+   const pieces = await getPiecesCollection()
 
    const paths = pieces.map((piece) => ({
       params: { id: piece.id },
@@ -25,10 +26,9 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(context) {
-   const res = await fetch(
-      `https://www.middleeastmacrame.com/api/pieces/${context.params.id}`
-   )
-   const piece = await res.json()
+   const pieceRaw = await getPiece(context.params.id)
 
-   return { props: { piece }, revalidate: 10 }
+   const pieceString = SuperJSON.stringify(pieceRaw)
+
+   return { props: { pieceString }, revalidate: 10 }
 }

@@ -1,9 +1,6 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect } from 'react'
 
-import { imageUpload } from '../../utils/firebase.utils'
-import { UserContext } from '../../contexts/userContext'
-
-import { addPiece } from '../../utils/firebase.utils'
+import { imageUpload, addPiece } from '../../utils/firebase.utils'
 
 import Input from '../form/Input'
 
@@ -21,7 +18,6 @@ export default function AddPieceForm() {
    const [pieceInfo, setPieceInfo] = useState(defaultPieceInfo)
    const { name, dimensions, description, file, startingBid, auctionEnd } =
       pieceInfo
-   const { currentUser } = useContext(UserContext)
 
    function changeHandler(event) {
       console.log(auctionEnd)

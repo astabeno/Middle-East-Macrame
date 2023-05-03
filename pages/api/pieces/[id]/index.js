@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 
 async function handleGet(req, res) {
    const piece = await getPiece(req.query.id)
-   //console.log(piece.auctionEnd)
+
    res.status(200).json({
       ...piece,
       id: req.query.id,

@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react'
 
 import { UserContext } from '../../contexts/userContext'
 
-import UserBidsGrid from '../../components/bids/userBidsGrid'
+import UserBidsGrid from '../../components/bids/UserBidsGrid'
 
 import { getUserBids } from '../../utils/firebase.utils'
 
