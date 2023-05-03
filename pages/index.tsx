@@ -1,6 +1,8 @@
 import { Cinzel_Decorative } from '@next/font/google'
 import { getPiecesCollection } from '../utils/firebase.utils'
 
+import { Timestamp } from 'firebase/firestore'
+
 import Carousel from '../components/carousel/Carousel'
 
 const titleFont = Cinzel_Decorative({
@@ -13,6 +15,9 @@ export interface Piece {
    name: string
    imageUrl: string
    price: number
+   auctionEnd: Timestamp
+   dateAdded: Timestamp
+   dateUpdated?: Timestamp
 }
 
 interface HomeProps {
