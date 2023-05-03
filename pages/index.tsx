@@ -41,7 +41,7 @@ export async function getStaticProps() {
    const piecesCollection = await getPiecesCollection()
    console.log(piecesCollection)
    const pieces = piecesCollection.map((piece) => {
-      if (!piece.dateUpdated) {
+      if (!('dateUpdated' in piece)) {
          return {
             ...piece,
             auctionEnd: piece.auctionEnd.toMillis(),
