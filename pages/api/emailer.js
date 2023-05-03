@@ -11,7 +11,7 @@ let transporter = nodemailer.createTransport({
    secure: true,
 })
 
-export async function emailer(req, res) {
+export default async function emailer(req, res) {
    if (req.method === 'OPTIONS') {
       // Handle preflight request
       res.status(200).end()
