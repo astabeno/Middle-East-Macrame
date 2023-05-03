@@ -45,7 +45,7 @@ export default function ManagePiece({ piece }) {
       } catch (error) {
          console.error(error)
       }
-      router.push('http://localhost:3000/admin/managePieces')
+      router.push('/admin/managePieces')
    }
 
    return (

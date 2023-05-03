@@ -10,16 +10,7 @@ import Input from '../form/Input'
 import { Button } from '@material-tailwind/react'
 
 export default function BidForm({ piece, auctionActive }) {
-   const {
-      id,
-      auctionEnd,
-      url,
-      description,
-      dimensions,
-      name,
-      sold,
-      startingBid,
-   } = piece
+   const { id, description, dimensions, startingBid } = piece
 
    const { currentUser } = useContext(UserContext)
 
@@ -37,7 +28,7 @@ export default function BidForm({ piece, auctionActive }) {
       setNewBid(latestBid.amount ? latestBid.amount + 1 : startingBid)
       setHighestBid(latestBid.amount ? latestBid.amount : startingBid)
       getBidCount()
-   }, [latestBid.amount, highestBid])
+   }, [latestBid, highestBid, id, startingBid])
 
    function handleBidChange(event) {
       const { value } = event.target
@@ -65,7 +56,7 @@ export default function BidForm({ piece, auctionActive }) {
                <div className="border border-gray-200 bg-gray-200 p-2 text-center text-gray-800">
                   <p className="text-xs">Dimensions</p>
                   <p>
-                     "{dimensions.height} x "{dimensions.width}
+                     &quot;{dimensions.height} x &quot;{dimensions.width}
                   </p>
                </div>
                <div className="rounded-lg border border-gray-200 p-2 text-gray-600 shadow-inner">
@@ -109,13 +100,13 @@ export default function BidForm({ piece, auctionActive }) {
                   {currentUser ? (
                      <Button
                         type="submit"
-                        className="w-60 bg-stone-200 text-stone-700">
+                        className="bg-stone-200 text-stone-700 w-60">
                         Place Bid
                      </Button>
                   ) : (
                      <Button
                         type="submit"
-                        className="w-60 bg-stone-700 text-stone-400"
+                        className="bg-stone-700 text-stone-400 w-60"
                         disabled>
                         Sign In to Bid
                      </Button>
@@ -125,7 +116,7 @@ export default function BidForm({ piece, auctionActive }) {
                <div className="my-5 mx-auto">
                   <Button
                      type="submit"
-                     className="w-60 bg-stone-700 text-stone-400"
+                     className="bg-stone-700 text-stone-400 w-60"
                      disabled>
                      Auction Finished
                   </Button>

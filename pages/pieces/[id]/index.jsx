@@ -11,7 +11,7 @@ export default function PieceInfo({ piece }) {
 }
 
 export async function getStaticPaths() {
-   const res = await fetch('http://localhost:3000/api/pieces')
+   const res = await fetch('https://www.middleeastmacrame.com/api/pieces')
    const pieces = await res.json()
 
    const paths = pieces.map((piece) => ({
@@ -26,7 +26,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context) {
    const res = await fetch(
-      `http://localhost:3000/api/pieces/${context.params.id}`
+      `https://www.middleeastmacrame.com/api/pieces/${context.params.id}`
    )
    const piece = await res.json()
 
