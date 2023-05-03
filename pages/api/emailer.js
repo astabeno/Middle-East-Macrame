@@ -11,7 +11,7 @@ let transporter = nodemailer.createTransport({
    secure: true,
 })
 
-export default async (req, res) => {
+export default async function emailer(req, res) {
    const mailOptions = {
       from: process.env.EMAIL_ADDRESS,
       ...req.body,

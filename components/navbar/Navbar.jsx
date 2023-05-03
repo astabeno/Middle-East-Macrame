@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react'
+import Image from 'next/image'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import {
    Bars3Icon,
@@ -62,16 +63,13 @@ export default function Navbar() {
                         </Disclosure.Button>
                      </div>
                      <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                        <div className="flex flex-shrink-0 items-center">
-                           <img
-                              className="block h-8 w-auto lg:hidden"
+                        <div className="flex flex-shrink-0 items-center bg-gray-900">
+                           <Image
+                              className="block h-8 w-auto bg-gray-900"
                               src="/middleEastMacrame.svg"
-                              alt="Macrame By Jacob"
-                           />
-                           <img
-                              className="hidden h-12 w-auto lg:block"
-                              src="/jslogo.png"
-                              alt="Macrame By Jacob"
+                              alt="Middle East Macrame"
+                              width={10}
+                              height={10}
                            />
                         </div>
                         <div className="hidden h-auto sm:ml-6 sm:block">

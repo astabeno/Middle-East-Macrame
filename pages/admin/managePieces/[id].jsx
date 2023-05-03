@@ -14,7 +14,7 @@ export default function ManagePiecePage({ id }) {
          setPiece(foundPiece)
       }
       findPiece()
-   }, [])
+   }, [id])
    let formattedPiece = null
    if (dateTime && piece) {
       formattedPiece = { ...piece, auctionEnd: dateTime }

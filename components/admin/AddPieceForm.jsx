@@ -158,7 +158,11 @@ export default function AddPieceForm() {
                      Upload Image Here
                   </span>
                ) : (
-                  <img src={URL.createObjectURL(file)} className="max-w-full" />
+                  <img
+                     src={URL.createObjectURL(file)}
+                     className="max-w-full"
+                     alt="preview"
+                  />
                )}
             </div>
          </div>

@@ -21,7 +21,7 @@ export default function Bids() {
          setUserBids(bids)
       }
       getBids()
-   }, [])
+   }, [currentUser.uid])
 
    return (
       <div className="my-6 mx-auto w-11/12 rounded-2xl bg-white p-8 shadow-lg">
@@ -31,7 +31,7 @@ export default function Bids() {
          {userBids ? (
             <UserBidsGrid bids={userBids} />
          ) : (
-            <p>You haven't bid on anything</p>
+            <p>You haven&apos;t bid on anything</p>
          )}
       </div>
    )

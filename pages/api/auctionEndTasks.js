@@ -112,7 +112,7 @@ const cronJob = cron.schedule('* * * * *', async () => {
    }
 })
 
-export default async (req, res) => {
+export default async function auctionEndTasks(req, res) {
    cronJob.stop()
    cronJob.start()
 }
