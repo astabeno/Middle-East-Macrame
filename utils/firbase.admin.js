@@ -1,6 +1,6 @@
 import firebaseAdmin from 'firebase-admin'
 
-const serviceAccount = require('/Users/andrewstabeno/credentials/macrame-by-jacob-firebase-adminsdk.json')
+const serviceAccount = local.env.FIREBASE_SERVICE_ACCOUNT_KEY
 
 if (!firebaseAdmin.apps.length) {
    firebaseAdmin.initializeApp({
@@ -8,7 +8,6 @@ if (!firebaseAdmin.apps.length) {
       databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASEURL,
    })
 }
-
 firebaseAdmin.auth()
 
 export default firebaseAdmin
