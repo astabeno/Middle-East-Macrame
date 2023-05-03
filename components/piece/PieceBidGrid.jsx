@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react'
-
 import Bid from '../bids/Bid'
 
 export default function PieceBidGrid({ bids }) {

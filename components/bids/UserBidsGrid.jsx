@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-
 import Bid from './Bid'
 
 export default function UserBidsGrid({ bids }) {

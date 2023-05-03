@@ -20,7 +20,6 @@ export default function AddPieceForm() {
       pieceInfo
 
    function changeHandler(event) {
-      console.log(auctionEnd)
       const { name, value } = event.target
       if (name === 'width' || name === 'height') {
          setPieceInfo({
