@@ -8,7 +8,7 @@ export default function PieceGrid({ pieces }) {
    const router = useRouter()
 
    function selectHandler(id) {
-      router.push(`http://localhost:3000/admin/managePieces/${id}`)
+      router.push(`/admin/managePieces/${id}`)
    }
 
    return (

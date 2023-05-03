@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { UserContext } from '../../contexts/userContext'
 import { Popover, Transition } from '@headlessui/react'
 import { BellIcon } from '@heroicons/react/24/outline'
-import useTimestampToDateTime from '../../hooks/useTimestampToDateTime'
 import useUSDate from '../../hooks/useUSDate'
 
 export default function Notifications() {
@@ -20,13 +19,13 @@ export default function Notifications() {
          <Popover.Panel className="absolute right-0 z-10 w-64 space-x-1 rounded-lg bg-white p-3 opacity-90">
             {notifications
                ? notifications.map((notification) => (
-                    <div className="border-b">
+                    <div className="border-b" key={notification.id}>
                        <div className="flex flex-row justify-between bg-orange-400">
                           <p className=" p-1 text-white">
                              {notification.title}
                           </p>
                           <p className="flex p-1 text-sm text-white">
-                             {useUSDate(notification.time)}
+                             {notification.time}
                           </p>
                        </div>
                        <p className="p-1 text-xs">{notification.text}</p>

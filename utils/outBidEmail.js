@@ -1,5 +1,5 @@
 export default async function outBidEmail(email, userName, pieceName, amount) {
-   const emailerUrl = `http://localhost:3000/api/emailer`
+   const emailerUrl = `https://www.middleeastmacrame.com/api/emailer`
 
    const emailData = {
       // Define the email data here, for example:
@@ -9,7 +9,7 @@ export default async function outBidEmail(email, userName, pieceName, amount) {
             <p>Your last bid for ${pieceName} 
             has been beat.  The current price is now $${amount}.
             If you can beat the price log in and bid now.</p>
-            <a href='http://localhost:3000'>Macrame By Jacob</>`,
+            <a href='https://www.middleeastmacrame.com'>Macrame By Jacob</>`,
    }
 
    try {

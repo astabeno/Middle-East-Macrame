@@ -38,6 +38,8 @@ import {
 
 import { getFunctions } from 'firebase/functions'
 
+import useUSDate from '../hooks/useUSDate'
+
 import { v4 as uuidv4 } from 'uuid'
 
 const firebaseConfig = {
@@ -129,7 +131,7 @@ export async function getNotifications(uid) {
    const notifications = notificationsSnapshot.docs.map((notification) => ({
       id: notification.id,
       ...notification.data(),
-      time: notification.data().time.toDate(),
+      time: useUSDate(notification.data().time.toDate()),
    }))
    return notifications
 }
