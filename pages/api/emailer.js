@@ -12,13 +12,18 @@ let transporter = nodemailer.createTransport({
 })
 
 function enableCORS(req, res, next) {
-   res.setHeader(
-      'Access-Control-Allow-Origin',
-      'https://www.middleeastmacrame.com'
-   )
+   const origin = req.headers.origin
+   if (allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin)
+   }
    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
    res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-   next()
+   if (req.method === 'OPTIONS') {
+      // Handle preflight request
+      res.status(200).end()
+   } else {
+      next()
+   }
 }
 
 export async function emailer(req, res) {
