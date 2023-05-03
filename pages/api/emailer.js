@@ -50,6 +50,7 @@ export const config = {
    api: {
       bodyParser: false,
    },
+   middleware: [{ handler: enableCORS }],
 }
 
 export default enableCORS(emailer)
