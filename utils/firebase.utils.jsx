@@ -7,6 +7,11 @@ import {
    signInWithEmailAndPassword,
    signOut,
    onAuthStateChanged,
+   updateProfile,
+   updatePassword,
+   updateEmail,
+   reauthenticateWithCredential,
+   EmailAuthProvider,
 } from 'firebase/auth'
 
 import {
@@ -50,7 +55,7 @@ const firebaseConfig = {
    storageBucket: process.env.NEXT_PUBLIC_FIREBSE_STORAGEBUCKET,
    messagingSenderId: process.env.NEXT_PUBLIC_FIREBSE_MESSAGING_SENDER_ID,
    appId: process.env.NEXT_PUBLIC_FIREBSE_APP_ID,
-   measurementId: process.envNEXT_PUBLIC_FIREBSE_MEASUREMENT_ID,
+   measurementId: process.env.NEXT_PUBLIC_FIREBSE_MEASUREMENT_ID,
 }
 
 export const app = initializeApp(firebaseConfig)
@@ -118,8 +123,69 @@ export const getUserDocument = async (uid) => {
          const newUserSnapshot = await getDoc(userRef)
          return newUserSnapshot.data()
       } catch (error) {
-         console.error('Error creating user document', error)
+         console.error('Error creating user document', error, 'color: #bada55')
       }
+   }
+}
+
+export async function updateCurrentUser(user, password) {
+   try {
+      const userRef = doc(db, 'users', user.uid)
+      const userSnapshot = await getDoc(userRef)
+
+      if (userSnapshot.exists()) {
+         // Reauthenticate the user with their current password
+         const credentials = EmailAuthProvider.credential(
+            auth.currentUser.email,
+            password
+         )
+
+         const reAuthResult = await reauthenticateWithCredential(
+            auth.currentUser,
+            credentials
+         )
+
+         // Update the user's email
+         await updateEmail(auth.currentUser, user.email)
+
+         // Update the user document in Firestore
+         await updateDoc(userRef, user)
+      }
+   } catch (error) {
+      console.log('error updating user', error)
+   }
+}
+
+export async function updateDisplayName(displayName, uid) {
+   const userRef = doc(db, 'users', uid)
+   const userSnapshot = await getDoc(userRef)
+
+   await updateDoc(userRef, { displayName: displayName })
+}
+
+export async function updateUserPassword(currentPassword, newPassword) {
+   console.log(currentPassword)
+   const credentials = EmailAuthProvider.credential(
+      auth.currentUser.email,
+      currentPassword
+   )
+   try {
+      const result = await reauthenticateWithCredential(
+         auth.currentUser,
+         credentials
+      )
+
+      console.log(result)
+
+      const passChangeResult = await updatePassword(
+         auth.currentUser,
+         newPassword
+      )
+      console.log(passChangeResult)
+      return 'success'
+   } catch (error) {
+      console.log('error changing password', error)
+      return error
    }
 }
 
@@ -143,6 +209,41 @@ export async function addNotification(notification, uid) {
    } catch (error) {
       console.error('error adding notification', error)
    }
+}
+
+export async function addWinningPayment(winningPayment, uid, authToken) {
+   try {
+      const userWinningPaymentsCol = collection(
+         db,
+         'users',
+         uid,
+         'winningPayments'
+      )
+      await addDoc(userWinningPaymentsCol, winningPayment, {
+         headers: {
+            Authorization: authToken,
+         },
+      })
+   } catch (error) {
+      console.error('error adding winningPayment', error)
+   }
+}
+
+export async function getWinningPayments(uid, authToken) {
+   console.log(authToken)
+   const winningPaymentSnapshot = await getDocs(
+      collection(db, 'users', uid, 'winningPayments'),
+      {
+         headers: {
+            Authorization: authToken,
+         },
+      }
+   )
+   const winningPayments = winningPaymentSnapshot.docs.map((payment) => ({
+      id: payment.id,
+      ...payment.data(),
+   }))
+   return winningPayments
 }
 
 export const createAuthUserWithEmailAndPassword = async (email, password) => {

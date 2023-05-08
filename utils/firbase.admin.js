@@ -1,6 +1,6 @@
 import firebaseAdmin from 'firebase-admin'
 
-const serviceAccount = local.env.FIREBASE_SERVICE_ACCOUNT_KEY
+const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
 
 if (!firebaseAdmin.apps.length) {
    firebaseAdmin.initializeApp({

@@ -1,16 +1,38 @@
 import { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../../contexts/userContext'
 import useUSDate from '../../hooks/useUSDate'
-import { getUserBidCount } from '../../utils/firebase.utils'
+import {
+   getUserBidCount,
+   updateCurrentUser,
+   updateDisplayName,
+   updateUserPassword,
+} from '../../utils/firebase.utils'
 
 import Input from '../form/Input'
 
-export default function ProfileComponent() {
-   const { currentUser } = useContext(UserContext)
-   const [userBidCount, setUserBidCount] = useState(0)
+import Reauthenticate from './Reauthenticate'
 
-   const { displayName, userType, createdAt, email, numberOfBids, uid } =
-      currentUser
+export default function ProfileComponent() {
+   const { currentUser, setCurrentUser } = useContext(UserContext)
+   const [updatedUser, setUpdatedUser] = useState(currentUser)
+   const [userBidCount, setUserBidCount] = useState(0)
+   const [passwords, setPasswords] = useState({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+   })
+
+   const { currentPassword, newPassword, confirmPassword } = passwords
+
+   const {
+      displayName,
+      userType,
+      createdAt,
+      email,
+      numberOfBids,
+      uid,
+      provider,
+   } = currentUser
 
    const initialsMatch = displayName.match(/\b(\w)/g)
    const initials = initialsMatch.join('')
@@ -20,12 +42,41 @@ export default function ProfileComponent() {
          const count = await getUserBidCount(uid)
          setUserBidCount(count)
       }
+      console.log(!currentUser.provider === 'password')
       getBidCount()
    })
 
-   const dateSignedup = useUSDate(createdAt.toDate())
+   function changeHandler(event) {
+      const { name, value } = event.target
+      setUpdatedUser({ ...updatedUser, [name]: value })
+   }
 
-   //const bidCount = useUserBidCount(currentUser.uid)
+   function reauthWithGoogle(event) {
+      event.preventDefault()
+      updateDisplayName(updatedUser.displayName, uid)
+      setCurrentUser(updatedUser)
+   }
+
+   function passwordsChangeHandler(event) {
+      const { name, value } = event.target
+      setPasswords({ ...passwords, [name]: value })
+   }
+
+   function passwordsSubmitHandler(event) {
+      event.preventDefault()
+
+      if (newPassword === confirmPassword) {
+         try {
+            updateUserPassword(currentPassword, newPassword)
+         } catch (error) {
+            console.error('error changing password', error)
+         }
+      } else {
+         alert('Passwords Do Not Match')
+      }
+   }
+
+   const dateSignedup = useUSDate(createdAt.toDate())
 
    return (
       <div className="justify container m-auto w-3/4 rounded-md bg-white p-8 shadow-2xl">
@@ -55,7 +106,7 @@ export default function ProfileComponent() {
                   <span className="mb-3 text-sm text-blue-500">
                      {dateSignedup}
                   </span>
-                  <span className="text-lg font-thin text-neutral-600">
+                  <span className="text-neutral-600 text-lg font-thin">
                      Bids{' '}
                   </span>
                   <span className="mb-3 text-sm text-blue-500">
@@ -78,69 +129,89 @@ export default function ProfileComponent() {
                </div>
             </div>
             <div className="flex w-2/3 flex-col">
-               <div className="flex flex-col border border-gray-300 p-4">
-                  <div className="mb-3 flex">
-                     <label className="mt-2 mr-4" htmlFor="email">
-                        Email address:
-                     </label>
+               <form className="flex flex-col rounded-lg border border-gray-300 p-4">
+                  <div className="mx-auto mb-3 w-5/6">
                      <Input
                         type="email"
                         name="email"
                         id="email"
-                        value={email}
+                        value={updatedUser.email}
+                        onChange={changeHandler}
+                        isRequired
+                        disabled={!provider !== 'password'}
                      />
                   </div>
-                  <div className="mb-3 flex">
-                     <label className="mt-2 mr-4" htmlFor="displayName">
-                        Display Name:
-                     </label>
-                     <input
-                        className="w-2/3 border-b border-gray-400  text-gray-600"
+                  <div className="mx-auto mb-3 w-5/6">
+                     <Input
                         type="text"
                         name="displayName"
                         id="displayName"
-                        value={displayName}
+                        value={updatedUser.displayName}
+                        onChange={changeHandler}
+                        isRequired
                      />
                   </div>
-               </div>
-               <form className="passwords flex flex-col bg-gray-300 p-4">
-                  <div className="mb-3 flex">
-                     <label className="mt-2 w-44" htmlFor="currentPassword">
-                        Current Password:
-                     </label>
-                     <input
-                        className="w-2/3 border-b border-gray-400"
-                        type="password"
-                        name="currentPassword"
-                        id="currentPassword"
-                     />
+                  <div className="mx-auto mb-3 w-5/6">
+                     {provider === 'password' ? (
+                        <Reauthenticate user={updatedUser} />
+                     ) : (
+                        <button
+                           onClick={reauthWithGoogle}
+                           className="mt-5 w-52 rounded-md bg-black p-3 text-white shadow-xl">
+                           Update Password
+                        </button>
+                     )}
                   </div>
-                  <div className="mb-3 flex">
-                     <label className="mt-2  w-44" htmlFor="password">
-                        New Password:
-                     </label>
-                     <input
-                        className="w-2/3 border-b border-gray-400"
-                        type="password"
-                        name="password"
-                        id="password"
-                     />
-                  </div>
-                  <div className="mb-3 flex">
-                     <label className="mt-2  w-44" htmlFor="confirmPassword">
-                        Confirm Password:
-                     </label>
-                     <input
-                        className="w-2/3 border-b border-gray-400"
-                        type="password"
-                        name="confirmPassword"
-                        id="confirmPassword"
-                     />
-                  </div>
-                  <button className="mt-5 w-28 rounded-md bg-black p-3 text-white shadow-xl">
-                     Submit
-                  </button>
                </form>
+               {provider === 'password' ? (
+                  <form
+                     className="passwords flex flex-col bg-gray-300 p-4"
+                     onSubmit={passwordsSubmitHandler}>
+                     <div className="mb-3 flex">
+                        <label className="mt-2 w-44" htmlFor="currentPassword">
+                           Current Password:
+                        </label>
+                        <input
+                           onChange={passwordsChangeHandler}
+                           className="w-2/3 border-b border-gray-400"
+                           type="password"
+                           name="currentPassword"
+                           id="currentPassword"
+                        />
+                     </div>
+                     <div className="mb-3 flex">
+                        <label className="mt-2  w-44" htmlFor="password">
+                           New Password:
+                        </label>
+                        <input
+                           onChange={passwordsChangeHandler}
+                           className="w-2/3 border-b border-gray-400"
+                           type="password"
+                           name="newPassword"
+                           id="newPassword"
+                        />
+                     </div>
+                     <div className="mb-3 flex">
+                        <label className="mt-2  w-44" htmlFor="confirmPassword">
+                           Confirm Password:
+                        </label>
+                        <input
+                           onChange={passwordsChangeHandler}
+                           className="w-2/3 border-b border-gray-400"
+                           type="password"
+                           name="confirmPassword"
+                           id="confirmPassword"
+                        />
+                     </div>
+                     <button
+                        type="submit"
+                        className="mt-5 w-52 rounded-md bg-black p-3 text-white shadow-xl">
+                        Update Password
+                     </button>
+                  </form>
+               ) : (
+                  <></>
+               )}
             </div>
          </div>
       </div>

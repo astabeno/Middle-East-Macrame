@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { UserContext } from '../../contexts/userContext'
 import { Popover, Transition } from '@headlessui/react'
 import { BellIcon } from '@heroicons/react/24/outline'
-import useUSDate from '../../hooks/useUSDate'
 
 export default function Notifications() {
    const { currentUser } = useContext(UserContext)

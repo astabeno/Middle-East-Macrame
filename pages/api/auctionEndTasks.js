@@ -7,7 +7,10 @@ import {
    pieceAuctionEnd,
    signInAuthUserWithEmailAndPassword,
    extendTime,
+   addWinningPayment,
 } from '../../utils/firebase.utils'
+
+import Stripe from 'stripe'
 
 let authToken
 
@@ -35,6 +38,10 @@ let transporter = nodemailer.createTransport({
    host: 'mail.privateemail.com',
    port: 465,
    secure: true,
+})
+
+const stripe = new Stripe(process.env.STRIPE_TEST_API, {
+   apiVersion: '2020-08-27',
 })
 
 const cronJob = cron.schedule('* * * * *', async () => {
@@ -68,34 +75,53 @@ const cronJob = cron.schedule('* * * * *', async () => {
                `Executing auctionFinishedTasks for piece ${name}
                on ${time}`
             )
+
             // Add Notification in highestBidders
 
             if (highestBidderUid) {
+               //creaet a customer for winning Item
+
                const timestamp = serverTimestamp()
                const notification = {
                   title: 'Your Bid Won!',
-                  text: `Congratulations ${highestBidder}! You won the auction the macrame piece '${name}' with the highest bid of $${highestBid}.`,
-                  pieceUrl: `urltopaymentportal`,
+                  text: `Congratulations ${highestBidder}! You won the auction the macrame 
+                  piece '${name}' with the highest bid of $${highestBid}.`,
                   pieceName: name,
                   read: false,
                   visible: true,
                   time: timestamp,
                }
-               try {
-                  pieceAuctionEnd(id, authToken)
-               } catch (error) {
-                  console.log('error changing notified to true', error)
+               pieceAuctionEnd(id, authToken)
+               await addNotification(notification, highestBidderUid)
+
+               const winningPayment = {
+                  itemId: id,
+                  itemName: name,
+                  itemAmount: highestBid,
                }
-               try {
-                  await addNotification(notification, highestBidderUid)
-               } catch (error) {
-                  console.log('error adding winning notification', error)
-               }
+               console.log(winningPayment)
+
+               await addWinningPayment(
+                  winningPayment,
+                  highestBidderUid,
+                  authToken
+               )
+
                const mailOptions = {
                   from: process.env.EMAIL_ADDRESS,
                   to: highestBidderEmail,
                   subject: `Auction for ${name} Ended`,
-                  text: `Congratulations ${highestBidder}! You won the auction the macrame piece '${name}' with the highest bid of $${highestBid}.`,
+                  text: `Congratulations ${highestBidder}! You won the auction the macrame piece '${name}' with the highest bid of $${highestBid}.
+                  We will email you an invoice shortly.  If you are in Waco or Indiana we can deliver the piece free of charge,
+                  if you are in another city we can figure out shipping to you. 
+                  Thank you so much,
+                  Jacob Stabeno`,
+                  html: `<p>Congratulations ${highestBidder}!</p>
+                  <p>You won the auction for the macrame piece '${name}' with the highest bid of $${highestBid}.</p>
+                  <p>We will email you an invoice shortly.  If you are in Waco or Indiana we can deliver the piece free of charge,
+                  if you are in another city we can figure out shipping to you.</p>
+                  <p>Thank You for Bidding at Middle East Macrame,</p>
+                  <p>Jacob Stabeno</p>`,
                }
                console.log(`this will email ${highestBidderEmail}`)
                await transporter.sendMail(mailOptions)
