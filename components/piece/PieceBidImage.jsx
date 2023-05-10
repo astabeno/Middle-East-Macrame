@@ -13,8 +13,8 @@ export default function PieceBidImage({ piece, auctionActive }) {
       <div className="relative">
          {auctionActive ? (
             <div
-               className="bg-stone-500 relative w-auto p-2 
-                            text-center text-2xl text-white">
+               className="bg-stone-500 relative w-auto bg-gray-600 
+                            p-2 text-center text-2xl text-white">
                <CountdownTimer targetDate={auctionEndFormatted} large />
             </div>
          ) : (

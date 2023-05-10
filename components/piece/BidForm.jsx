@@ -100,7 +100,7 @@ export default function BidForm({ piece, auctionActive }) {
                   {currentUser ? (
                      <Button
                         type="submit"
-                        className="bg-stone-200 text-stone-700 w-60">
+                        className="w-60 bg-gray-200 text-gray-700 shadow-md shadow-gray-400">
                         Place Bid
                      </Button>
                   ) : (

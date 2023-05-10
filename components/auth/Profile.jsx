@@ -158,7 +158,7 @@ export default function ProfileComponent() {
                         <button
                            onClick={reauthWithGoogle}
                            className="mt-5 w-52 rounded-md bg-black p-3 text-white shadow-xl">
-                           Update Password
+                           Update Display Name
                         </button>
                      )}
                   </div>

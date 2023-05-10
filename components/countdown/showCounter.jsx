@@ -4,11 +4,12 @@ import DateTimeDisplay from './DateTimeDisplay'
 
 export default function ShowCounter({ days, hours, minutes, seconds, large }) {
    const largeClassNames =
-      'items-center justify-center rounded-md border border-gray-300 text-lg font-bold leading-7'
+      'items-center justify-center rounded-md text-lg font-bold leading-7'
 
    return (
       <div>
-         <div className={`flex py-1  ${large ? largeClassNames : ''}`}>
+         <div
+            className={`flex space-x-5 py-1  ${large ? largeClassNames : ''}`}>
             {days > 0 ? (
                <>
                   <DateTimeDisplay
@@ -23,7 +24,7 @@ export default function ShowCounter({ days, hours, minutes, seconds, large }) {
                   />
                   <DateTimeDisplay
                      value={minutes}
-                     type={'Min'}
+                     type={'Minutes'}
                      isDanger={days <= 3}
                   />
                </>
@@ -36,12 +37,12 @@ export default function ShowCounter({ days, hours, minutes, seconds, large }) {
                   />
                   <DateTimeDisplay
                      value={minutes}
-                     type={'Min'}
+                     type={'Minutes'}
                      isDanger={days <= 3}
                   />
                   <DateTimeDisplay
                      value={seconds}
-                     type={'Sec'}
+                     type={'Seconds'}
                      isDanger={days <= 3}
                   />
                </>
