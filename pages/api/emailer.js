@@ -28,7 +28,7 @@ export default async function emailer(req, res) {
 
    try {
       // Send the email
-      await transporter.sendMail(mailOptions)
+      await transporter.sendMail(req.body)
       res.status(200).json({ message: 'Email sent successfully' })
    } catch (error) {
       res.status(500).json({ error: 'Failed to send email' })

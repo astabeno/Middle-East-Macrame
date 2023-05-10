@@ -9,7 +9,7 @@ export default function ContactForm() {
    async function handleSubmit(event) {
       event.preventDefault()
 
-      const emailerUrl = `https://www.middleeastmacrame.com/api/emailer`
+      const emailerUrl = `http://localhost:3000/api/emailer`
 
       //send question email to suppor@middleeastmacrame.com
       const questionEmailData = {
