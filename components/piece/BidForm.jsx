@@ -16,7 +16,7 @@ export default function BidForm({ piece, auctionActive }) {
 
    const latestBid = useLatestBid(id)
 
-   const [newBid, setNewBid] = useState(startingBid)
+   const [newBid, setNewBid] = useState(Number(startingBid))
    const [highestBid, setHighestBid] = useState(
       Number(latestBid.amount ? latestBid.amount : startingBid)
    )
@@ -24,7 +24,7 @@ export default function BidForm({ piece, auctionActive }) {
 
    useEffect(() => {
       setHighestBid(Number(latestBid.amount ? latestBid.amount : startingBid))
-      setNewBid(highestBid + 1)
+      setNewBid(Number(highestBid) + 1)
    }, [highestBid])
 
    useEffect(() => {

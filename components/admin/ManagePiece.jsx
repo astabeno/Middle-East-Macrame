@@ -10,7 +10,8 @@ export default function ManagePiece({ piece }) {
    const [pieceInfo, setPieceInfo] = useState(piece)
    const [file, setFile] = useState(null)
 
-   const { name, dimensions, startingBid, auctionEnd, url, id } = pieceInfo
+   const { name, description, dimensions, startingBid, auctionEnd, url, id } =
+      pieceInfo
 
    const router = useRouter()
 
@@ -68,6 +69,15 @@ export default function ManagePiece({ piece }) {
                   label="Name of Piece"
                   type="text"
                   value={name}
+                  placeholder=" "
+                  onChange={changeHandler}
+                  isRequired={true}
+               />
+               <Input
+                  name="description"
+                  label="Description"
+                  type="text"
+                  value={description}
                   placeholder=" "
                   onChange={changeHandler}
                   isRequired={true}
