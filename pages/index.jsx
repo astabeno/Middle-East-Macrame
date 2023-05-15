@@ -44,5 +44,6 @@ export async function getStaticProps() {
       props: {
          pieces,
       },
+      revalidate: 10,
    }
 }

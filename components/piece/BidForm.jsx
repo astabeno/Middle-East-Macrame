@@ -17,18 +17,24 @@ export default function BidForm({ piece, auctionActive }) {
    const latestBid = useLatestBid(id)
 
    const [newBid, setNewBid] = useState(startingBid)
-   const [highestBid, setHighestBid] = useState(startingBid)
+   const [highestBid, setHighestBid] = useState(
+      Number(latestBid.amount ? latestBid.amount : startingBid)
+   )
    const [pieceBidCount, setPieceBidCount] = useState(0)
+
+   useEffect(() => {
+      setHighestBid(Number(latestBid.amount ? latestBid.amount : startingBid))
+      setNewBid(highestBid + 1)
+   }, [highestBid])
 
    useEffect(() => {
       const getBidCount = async () => {
          const count = await getPieceBidCount(id)
          setPieceBidCount(count)
       }
-      setNewBid(latestBid.amount ? latestBid.amount + 1 : startingBid)
       setHighestBid(latestBid.amount ? latestBid.amount : startingBid)
       getBidCount()
-   }, [latestBid, highestBid, id, startingBid])
+   }, [latestBid, id, startingBid])
 
    function handleBidChange(event) {
       const { value } = event.target
@@ -87,7 +93,7 @@ export default function BidForm({ piece, auctionActive }) {
 
                <Input
                   type="number"
-                  name="bid"
+                  name="newBid"
                   label="New Bid"
                   id="bid"
                   onChange={handleBidChange}

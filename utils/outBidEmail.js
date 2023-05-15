@@ -1,5 +1,10 @@
 export default async function outBidEmail(email, userName, pieceName, amount) {
-   const emailerUrl = `https://www.middleeastmacrame.com/api/emailer`
+   let emailerUrl = ''
+   if (process.env.NODE_ENV === 'development') {
+      emailerUrl = `http://localhost:3000/api/emailer`
+   } else {
+      emailerUrl = `https://www.middleeastmacrame.com/api/emailer`
+   }
 
    const emailData = {
       // Define the email data here, for example:
@@ -20,16 +25,14 @@ export default async function outBidEmail(email, userName, pieceName, amount) {
          },
          body: JSON.stringify(emailData),
       })
-
       if (response.ok) {
-         console.log('Email sent successfully')
+         console.log('outbid email sent')
          // Handle success response here
       } else {
          console.error('Failed to send email')
          // Handle error response here
       }
    } catch (error) {
-      console.error('Failed to send email:', error)
-      // Handle error here
+      console.error('error sending outbid email', error)
    }
 }

@@ -16,7 +16,17 @@ export default function ManagePiece({ piece }) {
 
    function changeHandler(event) {
       const { name, value } = event.target
-      setPieceInfo({ ...pieceInfo, [name]: value })
+      if (name === 'width' || name === 'height') {
+         setPieceInfo({
+            ...pieceInfo,
+            dimensions: {
+               ...dimensions,
+               [name]: parseInt(value),
+            },
+         })
+      } else {
+         setPieceInfo({ ...pieceInfo, [name]: value })
+      }
    }
 
    async function handleSubmit(event) {
